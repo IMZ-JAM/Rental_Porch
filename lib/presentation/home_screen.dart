@@ -108,7 +108,14 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
-      appBar: AppBar(title: const Text('Bienvenido a Rental-Porch')),
-    );
+      appBar: AppBar(
+          title: const Text('Bienvenido a Rental-Porch')),
+      body:Container(
+        color: Colors.grey,
+        margin: const EdgeInsets.all(2),s
+        ),
+
+      );
+
   }
 }
