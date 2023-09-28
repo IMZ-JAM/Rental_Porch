@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rental_porch_app/presentation/home_screen.dart';
 import 'package:rental_porch_app/presentation/register_screen.dart';
+import 'package:rental_porch_app/presentation/dosopciones.dart';
+
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -67,7 +69,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   },
                 ),
                 const SizedBox(height: 40,),
-                ElevatedButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));}, child: const Text('Iniciar sesion', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),)),
+                ElevatedButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => TipoUsuarioScreen()));}, child: const Text('Iniciar sesion', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),)),
                 const SizedBox(height: 40,),
                 const Text('Aun no tienes cuenta?', style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),),
                 const SizedBox(height: 20,),
