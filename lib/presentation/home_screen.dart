@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rental_porch_app/presentation/login_screen.dart';
 import 'package:rental_porch_app/presentation/user_cliente.dart';
+import 'package:rental_porch_app/presentation/AgrPor.dart';
+import 'package:rental_porch_app/presentation/ElimPor.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -112,10 +114,42 @@ class HomeScreen extends StatelessWidget {
       ),
       appBar: AppBar(
           title: const Text('Bienvenido a Rental-Porch')),
-      body:Container(
-        color: Colors.grey,
-        margin: const EdgeInsets.all(2),
-        ),
+      body: Column(
+        children: <Widget>[
+          // Espacio entre el AppBar y el contenido
+          SizedBox(height: 16.0),
+          Container(
+            color: Colors.grey,
+            margin: const EdgeInsets.all(2),
+            
+          ),
+        ],
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AgregarPorcheScreen()),
+              );
+            },
+            child: Icon(Icons.add), 
+          ),
+          const SizedBox(height: 16.0), // Espacio entre los botones
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EliminarPorcheScreen()),
+              );
+            },
+            child: Icon(Icons.delete), 
+          ),
+        ],
+      ),
 
       );
 
