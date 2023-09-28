@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rental_porch_app/presentation/home_rentador.dart';
 import 'package:rental_porch_app/presentation/home_screen.dart';
 
 class TipoUsuarioScreen extends StatelessWidget {
@@ -20,7 +21,7 @@ class TipoUsuarioScreen extends StatelessWidget {
                   
                 Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()),
+                MaterialPageRoute(builder: (context) => const HomeRentador()),
               );
                 },
                 icon: Icon(Icons.home), // Icono representativo para Rentador
