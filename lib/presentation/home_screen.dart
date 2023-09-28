@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rental_porch_app/presentation/home_rentador.dart';
 import 'package:rental_porch_app/presentation/login_screen.dart';
 import 'package:rental_porch_app/presentation/user_cliente.dart';
 import 'package:rental_porch_app/presentation/AgrPor.dart';
@@ -85,13 +86,13 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               InkWell(
-                onTap: () => _onContainerPressed(context, "Ajustes"),
+                onTap: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeRentador()));},
                 child: Container(
                   margin: const EdgeInsets.only(top: 2),
                   padding: const EdgeInsets.all(15),
                   width: double.infinity,
                   color: Colors.grey[100],
-                  child: const Text("Ajustes"),
+                  child: const Text("Rentador"),
                 ),
               ),
               Expanded(child: Container()),
@@ -117,7 +118,7 @@ class HomeScreen extends StatelessWidget {
       body: Column(
         children: <Widget>[
           // Espacio entre el AppBar y el contenido
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           Container(
             color: Colors.grey,
             margin: const EdgeInsets.all(2),
@@ -129,24 +130,34 @@ class HomeScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
-          FloatingActionButton(
+          ElevatedButton(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => AgregarPorcheScreen()),
               );
             },
-            child: Icon(Icons.add), 
+            child: const Icon(Icons.add), 
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100)
+              )
+            ),
           ),
           const SizedBox(height: 16.0), // Espacio entre los botones
-          FloatingActionButton(
+          ElevatedButton(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => EliminarPorcheScreen()),
               );
             },
-            child: Icon(Icons.delete), 
+            child: const Icon(Icons.delete), 
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100)
+              )
+            ),
           ),
         ],
       ),

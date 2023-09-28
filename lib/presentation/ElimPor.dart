@@ -14,7 +14,7 @@ class _EliminarPorcheScreenState extends State<EliminarPorcheScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Eliminar Porche'),
+        title: const Text('Eliminar Porche'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -23,7 +23,7 @@ class _EliminarPorcheScreenState extends State<EliminarPorcheScreen> {
           child: Column(
             children: <Widget>[
               TextFormField(
-                decoration: InputDecoration(labelText: 'Nombre del Porche'),
+                decoration: const InputDecoration(labelText: 'Nombre del Porche'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, introduce un nombre';
@@ -37,7 +37,7 @@ class _EliminarPorcheScreenState extends State<EliminarPorcheScreen> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Precio por Hora'),
+                decoration: const InputDecoration(labelText: 'Precio por Hora'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -52,7 +52,7 @@ class _EliminarPorcheScreenState extends State<EliminarPorcheScreen> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Ubicacion'),
+                decoration: const InputDecoration(labelText: 'Ubicacion'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, introduce una ubicacion';
@@ -65,7 +65,7 @@ class _EliminarPorcheScreenState extends State<EliminarPorcheScreen> {
                   });
                 },
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
@@ -76,7 +76,7 @@ class _EliminarPorcheScreenState extends State<EliminarPorcheScreen> {
                     //Aqui se guardara la informacion en la base de datos
                   }
                 },
-                child: Text('Eliminar Porche'),
+                child: const Text('Eliminar Porche'),
               ),
             ],
           ),
