@@ -112,7 +112,7 @@ class HomeScreen extends StatelessWidget {
           title: const Text('Bienvenido a Rental-Porch')),
       body:Container(
         color: Colors.grey,
-        margin: const EdgeInsets.all(2),s
+        margin: const EdgeInsets.all(2),
         ),
 
       );
