@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 // ignore: camel_case_types
-class user_rentador extends StatefulWidget{
-  const user_rentador({super.key});
+class UserRentador extends StatefulWidget{
+  const UserRentador({super.key});
   @override
-  State<user_rentador> createState() => _user_rentadorState();
+  State<UserRentador> createState() => _UserRentadorState();
 }
 
 // ignore: camel_case_types
-class _user_rentadorState extends State<user_rentador>{
+class _UserRentadorState extends State<UserRentador>{
     final TextEditingController _userName = TextEditingController();
     final TextEditingController _userPassword = TextEditingController();
     final TextEditingController _userPhoneNumber = TextEditingController();

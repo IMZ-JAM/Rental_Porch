@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rental_porch_app/presentation/login_screen.dart';
+import 'package:rental_porch_app/presentation/user_cliente.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -71,7 +73,7 @@ class HomeScreen extends StatelessWidget {
                   style:
                   TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
               InkWell(
-                onTap: () => _onContainerPressed(context, "Perfil"),
+                onTap: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const UserCliente()));},
                 child: Container(
                   margin: const EdgeInsets.only(top: 10),
                   padding: const EdgeInsets.all(15),
@@ -92,7 +94,7 @@ class HomeScreen extends StatelessWidget {
               ),
               Expanded(child: Container()),
               InkWell(
-                onTap: () => _onContainerPressed(context, "Cerrar Sesión"),
+                onTap: () { Navigator.push(context, MaterialPageRoute(builder: (context) => const LogInScreen()));},
                 child: Container(
                   padding: const EdgeInsets.all(20),
                   margin: const EdgeInsets.only(bottom: 2, top: 2),

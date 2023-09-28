@@ -2,13 +2,13 @@
 
 import 'package:flutter/material.dart';
 
-class user_cliente extends StatefulWidget{
-  const user_cliente({super.key});
+class UserCliente extends StatefulWidget{
+  const UserCliente({super.key});
   @override
-  State<user_cliente> createState() => _user_clienteState();
+  State<UserCliente> createState() => _UserClienteState();
 }
 
-class _user_clienteState extends State<user_cliente>{
+class _UserClienteState extends State<UserCliente>{
     final TextEditingController _userName = TextEditingController();
     final TextEditingController _userPassword = TextEditingController();
     final TextEditingController _userPhoneNumber = TextEditingController();
