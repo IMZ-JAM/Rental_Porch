@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rental_porch_app/presentation/login_screen.dart';
 import 'package:rental_porch_app/presentation/user_rentador.dart';
 
 class HomeRentador extends StatelessWidget {
@@ -77,7 +78,7 @@ class HomeRentador extends StatelessWidget {
               Expanded(child: Container()),
               InkWell(
                 onTap: () { 
-                  // Aquí va la lógica para "Cerrar Sesión" 
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const LogInScreen()));
                 },
                 child: Container(
                   padding: const EdgeInsets.all(20),

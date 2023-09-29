@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rental_porch_app/presentation/home_screen.dart';
 import 'package:rental_porch_app/presentation/register_screen.dart';
 import 'package:rental_porch_app/presentation/dosopciones.dart';
 
