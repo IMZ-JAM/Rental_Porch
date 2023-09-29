@@ -25,7 +25,7 @@ class _LogInScreenState extends State<LogInScreen> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Bienvenidos a Rental-Porch', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),),
+                const Text('Bienvenidos a Rental-Porch', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),),
                 const SizedBox(height: 20,),
                 const Text('Inicio de sesion', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
                 const SizedBox(height: 40,),

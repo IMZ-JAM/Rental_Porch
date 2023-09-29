@@ -46,6 +46,14 @@ class HomeScreen extends StatelessWidget {
               child: Image.network(
                   "https://cdn-icons-png.flaticon.com/512/7429/7429878.png"),
             ),
+            const Text(
+              'Menu', 
+              style: TextStyle(
+                fontWeight: FontWeight.bold, 
+                fontSize: 25
+              ),
+            ),
+            const SizedBox(height: 10,),
             const Text("Lugares Disponibles",
                 style:
                 TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
