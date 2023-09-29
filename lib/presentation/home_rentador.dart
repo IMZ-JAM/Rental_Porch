@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rental_porch_app/presentation/AgrPor.dart';
+import 'package:rental_porch_app/presentation/ElimPor.dart';
 import 'package:rental_porch_app/presentation/login_screen.dart';
 import 'package:rental_porch_app/presentation/user_rentador.dart';
 
@@ -29,7 +31,7 @@ class HomeRentador extends StatelessWidget {
                   TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
               InkWell(
                 onTap: () { 
-                  // Aquí va la lógica para "Agregar Patio"
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AgregarPorcheScreen()));
                 },
                 child: Container(
                   margin: const EdgeInsets.only(top: 30),
@@ -41,7 +43,7 @@ class HomeRentador extends StatelessWidget {
               ),
               InkWell(
                 onTap: () { 
-                  // Aquí va la lógica para "Eliminar Patio"
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => EliminarPorcheScreen()));
                 },
                 child: Container(
                   margin: const EdgeInsets.only(top: 2),
