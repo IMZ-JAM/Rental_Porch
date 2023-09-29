@@ -1,117 +1,118 @@
 import 'package:flutter/material.dart';
+import 'package:rental_porch_app/presentation/user_rentador.dart';
 
-class HomeRentador extends StatefulWidget {
-  const HomeRentador({Key? key}) : super(key: key);
+class HomeRentador extends StatelessWidget {
+  const HomeRentador({super.key});
 
-  @override
-  _HomeRentadorState createState() => _HomeRentadorState();
-}
-
-class _HomeRentadorState extends State<HomeRentador> {
-  void _navigateToAddPatio() {
-    // Navegar a la pantalla para agregar un patio.
-    print('Navegando para agregar un patio...');
-  }
-  void _navigateToRemovePatio() {
-    // Navegar a la pantalla para eliminar un patio.
-    print('Navegando para eliminar un patio...');
-  }
-
-  void _navigateToReservationsCalendar() {
-    // Navegar a la pantalla del calendario de reservas.
-    print('Navegando al calendario de reservas...');
+  void _onContainerPressed(BuildContext context, String text) {
+    print("Presionaste el contenedor $text");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Center(child: Text('Inicio - Rentador')),
-        backgroundColor: const Color.fromARGB(255, 9, 181, 181),
-      ),
-      body: SingleChildScrollView(
-        child: MyContainer(
+      drawer: Drawer(
+        child: Container(
+          color: Colors.blue,
           child: Column(
             children: [
-              // Los widgets en la Stack pueden ser reemplazados o modificados según tu diseño preferido.
-              const Stack(
-                children: [MyAppContainer()],
+              Container(
+                width: 100,
+                height: 100,
+                margin: const EdgeInsets.all(25),
+                child: Image.network(
+                    "https://cdn-icons-png.flaticon.com/512/7429/7429878.png"),
               ),
-              _sizeEspacio(),
-              MyButton(
-                lblText: const Text('Agregar Patio'),
-                press: _navigateToAddPatio,
+              const Text("Menu",
+                  style:
+                  TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+              InkWell(
+                onTap: () { 
+                  // Aquí va la lógica para "Agregar Patio"
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 30),
+                  padding: const EdgeInsets.all(15),
+                  width: double.infinity,
+                  color: Colors.grey[100],
+                  child: const Text("Agregar Patio"),
+                ),
               ),
-              _sizeEspacio(),
-              MyButton(
-                lblText: const Text('Eliminar Patio'),
-                press: _navigateToRemovePatio,
+              InkWell(
+                onTap: () { 
+                  // Aquí va la lógica para "Eliminar Patio"
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 2),
+                  padding: const EdgeInsets.all(15),
+                  width: double.infinity,
+                  color: Colors.grey[100],
+                  child: const Text("Eliminar Patio"),
+                ),
               ),
-              _sizeEspacio(),
-              MyButton(
-                lblText: const Text('Ver Calendario de Reservas'),
-                press: _navigateToReservationsCalendar,
+              InkWell(
+                onTap: () { 
+                  // Aquí va la lógica para "Lista de Reservas"
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 2),
+                  padding: const EdgeInsets.all(15),
+                  width: double.infinity,
+                  color: Colors.grey[100],
+                  child: const Text("Lista de Reservas"),
+                ),
               ),
-              _sizeEspacio(),
+              InkWell(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const UserRentador()));
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 30),
+                  padding: const EdgeInsets.all(15),
+                  width: double.infinity,
+                  color: Colors.grey[100],
+                  child: const Text("Perfil"),
+                ),
+              ),
+              Expanded(child: Container()),
+              InkWell(
+                onTap: () { 
+                  // Aquí va la lógica para "Cerrar Sesión" 
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  margin: const EdgeInsets.only(bottom: 2, top: 2),
+                  width: double.infinity,
+                  color: Colors.black87,
+                  alignment: Alignment.center,
+                  child: const Text("Cerrar Sesión",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+              ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _sizeEspacio() {
-    return const SizedBox(height: 30);
-  }
-}
-
-class MyButton extends StatelessWidget {
-  const MyButton({Key? key, required this.lblText, required this.press})
-      : super(key: key);
-  final Text lblText;
-  final VoidCallback press;
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: press,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromARGB(255, 9, 181, 181),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        textStyle: const TextStyle(
-            color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+      appBar: AppBar(
+        title: const Text('Bienvenido a Rental-Porch - Rentador'),
       ),
-      child: lblText,
-    );
-  }
-}
-
-class MyContainer extends StatelessWidget {
-  const MyContainer({Key? key, required this.child}) : super(key: key);
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 900,
-      margin: const EdgeInsets.symmetric(),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(31, 255, 255, 255).withOpacity(0.5),
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(40),
-          bottomLeft: Radius.circular(40),
+      body: Container(
+        margin: const EdgeInsets.all(10),
+        child: ListView.builder(
+          itemCount: 5, // Este valor debería ser el número de patios registrados.
+          itemBuilder: (context, index) {
+            return Card(
+              child: ListTile(
+                title: Text('Patio $index'), // Reemplaza por el nombre del patio
+                onTap: () {
+                  _onContainerPressed(context, 'Patio $index');
+                },
+              ),
+            );
+          },
         ),
       ),
-      child: child,
     );
-  }
-}
-
-class MyAppContainer extends StatelessWidget {
-  const MyAppContainer({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }
