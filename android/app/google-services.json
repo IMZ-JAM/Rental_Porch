@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "992625102853",
+    "project_id": "rental-porch",
+    "storage_bucket": "rental-porch.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992625102853:android:3c3fd7f2ed680b83af4c6c",
+        "android_client_info": {
+          "package_name": "com.example.rental_porch_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwOoTB4MGWTy2wIfxP4GtyT2VIIdlk-PM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992625102853:android:b7755c2c9c28de91af4c6c",
+        "android_client_info": {
+          "package_name": "rental.porch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwOoTB4MGWTy2wIfxP4GtyT2VIIdlk-PM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rental_porch_app/presentation/login_screen.dart';
-import 'package:rental_porch_app/presentation/user_cliente.dart';
+import 'package:rental_porch_app/presentation/user_page.dart';
 import 'package:rental_porch_app/presentation/AgrPor.dart';
 import 'package:rental_porch_app/presentation/ElimPor.dart';
 
@@ -46,15 +46,9 @@ class HomeScreen extends StatelessWidget {
               child: Image.network(
                   "https://cdn-icons-png.flaticon.com/512/7429/7429878.png"),
             ),
-            const Text(
-              'Menu', 
-              style: TextStyle(
-                fontWeight: FontWeight.bold, 
-                fontSize: 25
-              ),
-            ),
+            
             const SizedBox(height: 10,),
-            const Text("Lugares Disponibles",
+            const Text("Favoritos",
                 style:
                 TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
             InkWell(
@@ -101,7 +95,7 @@ class HomeScreen extends StatelessWidget {
                 style:
                 TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
             InkWell(
-              onTap: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const UserCliente()));},
+              onTap: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const UserPage()));},
               child: Container(
                 margin: const EdgeInsets.only(top: 10),
                 padding: const EdgeInsets.all(15),

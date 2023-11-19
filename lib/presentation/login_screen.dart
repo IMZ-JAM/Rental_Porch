@@ -1,6 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:rental_porch_app/presentation/register_screen.dart';
 import 'package:rental_porch_app/presentation/dosopciones.dart';
+import 'package:rental_porch_app/services/firebase_service.dart';
+import 'package:rental_porch_app/utils/main_interface.dart';
 
 
 class LogInScreen extends StatefulWidget {
@@ -11,9 +15,8 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
-
-  String _email = '';
-  String _password = '';
+  final TextEditingController _emailControllerLogin = TextEditingController();
+  final TextEditingController _passwordControllerLogin = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +33,7 @@ class _LogInScreenState extends State<LogInScreen> {
                 const Text('Inicio de sesion', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
                 const SizedBox(height: 40,),
                 TextField(
+                  controller: _emailControllerLogin,
                   enableInteractiveSelection: false,
                   autofocus: true,
                   textCapitalization: TextCapitalization.characters,
@@ -43,13 +47,10 @@ class _LogInScreenState extends State<LogInScreen> {
                       borderRadius: BorderRadius.circular(20)
                     ),
                   ),
-                  onSubmitted: (valor) {
-                    _email = valor;
-                    print('El email es $_email');
-                  },
                 ),
                 const SizedBox(height: 30,),
                 TextField(
+                  controller: _passwordControllerLogin,
                   enableInteractiveSelection: false,
                   obscureText: true,
                   decoration: InputDecoration(
@@ -62,13 +63,25 @@ class _LogInScreenState extends State<LogInScreen> {
                       borderRadius: BorderRadius.circular(20)
                     ),
                   ),
-                  onSubmitted: (valor) {
-                    _password = valor;
-                    print('La contraseña es $_password');
-                  },
                 ),
                 const SizedBox(height: 40,),
-                ElevatedButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => TipoUsuarioScreen()));}, child: const Text('Iniciar sesion', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),)),
+                ElevatedButton(
+                  onPressed: () async {
+                    List loginList = await getUsers(_emailControllerLogin.text, _passwordControllerLogin.text);
+                    if(loginList[0]){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => TipoUsuarioScreen()));  
+                      _emailControllerLogin.clear();
+                      _passwordControllerLogin.clear();
+                    }
+                    else{
+                      showMessage(context, loginList[1], const Color.fromARGB(184, 255, 0, 0));
+                    }
+                    }, 
+                    child: const Text('Iniciar sesion', 
+                    style: TextStyle(
+                      fontSize: 22, 
+                      fontWeight: FontWeight.bold),
+                  )),
                 const SizedBox(height: 40,),
                 const Text('Aun no tienes cuenta?', style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),),
                 const SizedBox(height: 20,),
@@ -81,3 +94,4 @@ class _LogInScreenState extends State<LogInScreen> {
     );
   }
 }
+

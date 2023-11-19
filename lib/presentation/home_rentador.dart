@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rental_porch_app/presentation/AgrPor.dart';
 import 'package:rental_porch_app/presentation/ElimPor.dart';
 import 'package:rental_porch_app/presentation/login_screen.dart';
-import 'package:rental_porch_app/presentation/user_rentador.dart';
+import 'package:rental_porch_app/presentation/user_page.dart';
 
 class HomeRentador extends StatelessWidget {
   const HomeRentador({super.key});
@@ -67,7 +67,7 @@ class HomeRentador extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const UserRentador()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const UserPage()));
                 },
                 child: Container(
                   margin: const EdgeInsets.only(top: 30),
