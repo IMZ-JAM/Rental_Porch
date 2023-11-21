@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:rental_porch_app/presentation/AgrPor.dart';
-import 'package:rental_porch_app/presentation/ElimPor.dart';
 import 'package:rental_porch_app/presentation/login_screen.dart';
 import 'package:rental_porch_app/presentation/user_page.dart';
+import 'package:rental_porch_app/utils/main_interface.dart';
+import 'package:rental_porch_app/utils/user_porches.dart';
 
-class HomeRentador extends StatelessWidget {
+class HomeRentador extends StatefulWidget {
   const HomeRentador({super.key});
+  HomeRentadorState createState() => HomeRentadorState();
+  
+}
 
-  void _onContainerPressed(BuildContext context, String text) {
-    print("Presionaste el contenedor $text");
-  }
-
+class HomeRentadorState extends State<HomeRentador>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,18 +40,6 @@ class HomeRentador extends StatelessWidget {
                   width: double.infinity,
                   color: Colors.grey[100],
                   child: const Text("Agregar Patio"),
-                ),
-              ),
-              InkWell(
-                onTap: () { 
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => EliminarPorcheScreen()));
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(top: 2),
-                  padding: const EdgeInsets.all(15),
-                  width: double.infinity,
-                  color: Colors.grey[100],
-                  child: const Text("Eliminar Patio"),
                 ),
               ),
               InkWell(
@@ -98,18 +87,18 @@ class HomeRentador extends StatelessWidget {
         ),
       ),
       appBar: AppBar(
-        title: const Text('Bienvenido a Rental-Porch - Rentador'),
+        title: const Text('Bienvenido a Rental-Porch'),
       ),
       body: Container(
         margin: const EdgeInsets.all(10),
         child: ListView.builder(
-          itemCount: 5, // Este valor debería ser el número de patios registrados.
-          itemBuilder: (context, index) {
+          itemCount: UserPorches.porchesId.length, 
+          itemBuilder: (context, index){
             return Card(
               child: ListTile(
-                title: Text('Patio $index'), // Reemplaza por el nombre del patio
+                title: Text('${UserPorches.porchesInfo[index]["name"]}'),
                 onTap: () {
-                  _onContainerPressed(context, 'Patio $index');
+                  showPorchInfoDialog(context, UserPorches.porchesInfo[index]['description'],UserPorches.porchesInfo[index]['area'].toDouble(), UserPorches.porchesInfo[index]['rentPricePerDay'].toDouble(), UserPorches.porchesInfo[index]['name'], UserPorches.porchesId[index]);
                 },
               ),
             );
@@ -119,3 +108,5 @@ class HomeRentador extends StatelessWidget {
     );
   }
 }
+
+
