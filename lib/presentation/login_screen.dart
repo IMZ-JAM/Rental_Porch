@@ -20,19 +20,28 @@ class _LogInScreenState extends State<LogInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold( 
+    return Scaffold(
+      backgroundColor: Colors.white , // Cambia a tu color de fondo deseado
       body: Center(
         child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 60.0, vertical: 200.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 120.0),
           children: <Widget>[
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Bienvenidos a Rental-Porch', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),),
+                Container(
+                  width: 100,
+                  height: 100,
+                  margin: const EdgeInsets.all(10),
+                  child: Image.network(
+                      "https://cdn-icons-png.flaticon.com/512/7429/7429878.png"),
+                ),
+                const Text('Bienvenidos a Rental-Porch', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 27 ),),
                 const SizedBox(height: 20,),
-                const Text('Inicio de sesion', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
-                const SizedBox(height: 40,),
+                const Text('Inicio de sesion', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
+                const SizedBox(height: 20,),
                 TextField(
+
                   controller: _emailControllerLogin,
                   enableInteractiveSelection: false,
                   autofocus: true,
@@ -46,6 +55,8 @@ class _LogInScreenState extends State<LogInScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20)
                     ),
+                    filled: true, // Hace que el fondo del TextField se llene de color
+                    fillColor: Colors.white, // Cambia a tu color deseado
                   ),
                 ),
                 const SizedBox(height: 30,),
@@ -62,6 +73,8 @@ class _LogInScreenState extends State<LogInScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20)
                     ),
+                    filled: true, // Hace que el fondo del TextField se llene de color
+                    fillColor: Colors.white, // Cambia a tu color deseado
                   ),
                 ),
                 const SizedBox(height: 40,),
@@ -77,15 +90,11 @@ class _LogInScreenState extends State<LogInScreen> {
                       showMessage(context, loginList[1], const Color.fromARGB(184, 255, 0, 0));
                     }
                     }, 
-                    child: const Text('Iniciar sesion', 
-                    style: TextStyle(
-                      fontSize: 22, 
-                      fontWeight: FontWeight.bold),
-                  )),
+                    child: const Text('Iniciar sesion', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.lightBlue ),)),
                 const SizedBox(height: 40,),
-                const Text('Aun no tienes cuenta?', style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),),
+                const Text('Aun no tienes cuenta?', style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),),
                 const SizedBox(height: 20,),
-                ElevatedButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterScreen()));}, child: const Text('Registrate', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),))
+                ElevatedButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterScreen()));}, child: const Text('Registrate', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,  color: Colors.lightBlue ),))
               ],
             ),
           ],
