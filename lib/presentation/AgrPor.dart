@@ -1,4 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:rental_porch_app/presentation/home_rentador.dart';
+import 'package:rental_porch_app/services/firebase_service.dart';
+import 'package:rental_porch_app/utils/main_interface.dart';
 
 class AgregarPorcheScreen extends StatefulWidget {
   @override
@@ -7,14 +13,16 @@ class AgregarPorcheScreen extends StatefulWidget {
 
 class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
   final _formKey = GlobalKey<FormState>();
-  String? nombrePorche; // Cambiamos a String nullable
-  double? precioPorche; // Cambiamos a double nullable
-
+  TextEditingController _nameController = new TextEditingController();
+  TextEditingController _priceController = new TextEditingController();
+  TextEditingController _areaController = new TextEditingController();
+  TextEditingController _descriptionController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Agregar Porche'),
+        automaticallyImplyLeading: false,
+        title: const Text('Agregar Porche'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -23,21 +31,26 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
           child: Column(
             children: <Widget>[
               TextFormField(
-                decoration: InputDecoration(labelText: 'Nombre del Porche'),
+                controller: _nameController,
+                decoration: const InputDecoration(labelText: 'Nombre del Porche'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, introduce un nombre';
+                    return 'Por favor, introduce un nombre irrepetible';
                   }
                   return null;
                 },
-                onChanged: (value) {
-                  setState(() {
-                    nombrePorche = value;
-                  });
-                },
+              ),
+              TextField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'Descripción del Porche',
+                ),
+                maxLines: 3,
+                
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Precio por Hora'),
+                controller: _priceController,
+                decoration: const InputDecoration(labelText: 'Precio por Día (\$)'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -45,38 +58,54 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
                   }
                   return null;
                 },
-                onChanged: (value) {
-                  setState(() {
-                    precioPorche = double.tryParse(value);
-                  });
-                },
+                
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Ubicacion'),
+                controller: _areaController,
+                decoration: const InputDecoration(labelText: 'Área (m²)'),
+                keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, introduce un nombre';
+                    return 'Por favor, introduce una área';
                   }
                   return null;
                 },
-                onChanged: (value) {
-                  setState(() {
-                    nombrePorche = value;
-                  });
-                },
+              ),              
+              const SizedBox(height: 10.0),
+              const Image(
+                image: AssetImage('assets/images/map_point.png'),
               ),
-              SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // Aquí puedes guardar la información del porche en tu base de datos o hacer lo que necesites.
-                    // Puedes acceder a 'nombrePorche' y 'precioPorche' para obtener los valores ingresados.
-                    // Luego, redirige al vendedor a la página principal u otra página según tu flujo de la aplicación.
-                    // Ejemplo: Navigator.of(context).pop();
+              const SizedBox(height: 10.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                ElevatedButton(
+                onPressed: () async{
+                  if(_formKey.currentState!.validate() && await isPorchNameUnrepeatable(_nameController.text)) {
+                    await addPorch(_nameController.text, _descriptionController.text, double.parse(_priceController.text), double.parse(_areaController.text), const GeoPoint(3, 3));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeRentador()));  
+                    showMessage(context, "Patio agregado", const Color.fromARGB(127, 0, 255, 8));
+                  }
+                  else{
+                    showMessage(context, "Ya hay un patio con ese nombre", const Color.fromARGB(184, 255, 0, 0));
                   }
                 },
-                child: Text('Agregar Porche'),
+                child: const Text('Agregar Porche'),
               ),
+                ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red
+                ),
+                onPressed: () async{
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => const HomeRentador()
+                  ));  
+                },
+                child: const Text('Cancelar'),
+              ),
+              
+              ],)
+              
             ],
           ),
         ),
@@ -84,3 +113,4 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
     );
   }
 }
+
