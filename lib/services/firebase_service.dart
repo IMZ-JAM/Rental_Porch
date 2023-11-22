@@ -144,7 +144,7 @@ Future<List> addUsers(String name, email, password, phoneNumber) async{
   if(isStringNotEmpty(name) && isStringNotEmpty(email) && isStringNotEmpty(password)){
     if(await isEmailUnrepeatable(email)){
       if(email.contains("@") && email.contains(".") && isPhoneNumber(phoneNumber)){
-      await database.collection("users").add({"name":name, "email":email, "password":password, "phoneNumber": phoneNumber});
+      await database.collection("users").add({"name":name, "email":email, "password":password, "phoneNumber": phoneNumber,"porches":[]});
       list.add(true);
       list.add("Registro existoso");
     }else{
