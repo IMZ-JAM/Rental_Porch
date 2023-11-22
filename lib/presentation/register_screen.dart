@@ -25,15 +25,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       body: Center(
         child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 60.0, vertical: 200.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 90.0),
           children: <Widget>[
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Unete a Rental-Porch', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),),
+                Container(
+                  width: 100,
+                  height: 100,
+                  margin: const EdgeInsets.all(10),
+                  child: Image.asset(
+                    "assets/images/registrate.png",
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const Text('Unete a Rental-Porch', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 27),),
                 const SizedBox(height: 20,),
                 const Text('REGISTRATE!', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
-                const SizedBox(height: 40,),
+                const SizedBox(height: 10,),
                 TextField(
                   controller: _nameControllerReg,
                   enableInteractiveSelection: false,
@@ -99,7 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 40,),
+                const SizedBox(height: 20,),
                 ElevatedButton(
                   onPressed: () async {
                     List regList = await addUsers(_nameControllerReg.text, _emailControllerReg.text, _passwordControllerReg.text, _phoneNumberControllerReg.text);
@@ -115,15 +124,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: const Text(
                     'Registrate', 
                     style: TextStyle(
-                      fontSize: 22, 
-                      fontWeight: FontWeight.bold
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold, color: Colors.lightBlue
                     ),
                   )
                 ),
-                const SizedBox(height: 40,),
-                const Text('Ya tienes cuenta?', style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),),
+                const SizedBox(height: 10,),
+                const Text('Ya tienes cuenta?', style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),),
                 const SizedBox(height: 20,),
-                ElevatedButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const LogInScreen()));}, child: const Text('Iniciar sesion', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),))
+                ElevatedButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const LogInScreen()));}, child: const Text('Iniciar sesion', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.lightBlue ),))
               ],
             ),
           ],
