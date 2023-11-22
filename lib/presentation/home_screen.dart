@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rental_porch_app/presentation/login_screen.dart';
+import 'package:rental_porch_app/presentation/map/map_screen.dart';
 import 'package:rental_porch_app/presentation/user_page.dart';
 import 'package:rental_porch_app/presentation/AgrPor.dart';
 import 'package:rental_porch_app/presentation/ElimPor.dart';
@@ -19,17 +20,17 @@ class HomeScreen extends StatelessWidget {
       drawer: Menu(context),
       appBar: AppBar(
           title: const Text('Bienvenido a Rental-Porch')),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: NetworkImage("https://img.freepik.com/vector-premium/mapa-ciudad-cualquier-tipo-informacion-grafica-digital-publicacion-impresa-mapa-gps_403715-37.jpg?w=2000"),
-            fit: BoxFit.cover
+      body: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const MapScreen()));
+            }, 
+            child: const Text('Mapa')
           )
-        ),
+        ],
       ),
-      floatingActionButton: const Buttom_zoom(),
-
-      );
+    );
 
   }
 
