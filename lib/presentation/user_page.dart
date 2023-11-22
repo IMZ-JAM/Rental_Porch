@@ -39,7 +39,7 @@ class _userControllerState extends State<UserPage>{
     Widget build(BuildContext context){
       return Scaffold(
         appBar: AppBar(
-          title: Center(child: Text('Cuenta de '+User.info['name'])),
+          title: Center(child: Text('Cuenta de '+User.info['name'], )),
         ),
         body: SingleChildScrollView(
           child: MyContainer(
@@ -53,7 +53,7 @@ class _userControllerState extends State<UserPage>{
                 _sizeEspacio(),
                 const Divider(
                   color: Colors.black,
-                  thickness: 2.0,     
+                  thickness: 2.0,
                 ),
                 MyTextInput(inputController: _userControllerName, label: User.info['name'], inputIcon: const Icon(Icons.person)),
                 _sizeEspacio(),
