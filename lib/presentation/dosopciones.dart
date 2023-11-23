@@ -7,7 +7,7 @@ class TipoUsuarioScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Selecciona tu Tipo de Usuario'),
+        title: const Text('Selecciona tu Tipo de Usuario'),
       ),
       body: Center(
         child: Column(
@@ -34,7 +34,7 @@ class TipoUsuarioScreen extends StatelessWidget {
                   children: [
                     Positioned.fill(
                       child: Ink.image(
-                        image: AssetImage('assets/images/Rentador.png'),
+                        image: const AssetImage('assets/images/Rentador.png'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -61,7 +61,7 @@ class TipoUsuarioScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 100.0),
+            const SizedBox(height: 100.0),
             InkWell(
               onTap: () {
                 Navigator.push(
@@ -83,7 +83,7 @@ class TipoUsuarioScreen extends StatelessWidget {
                   children: [
                     Positioned.fill(
                       child: Ink.image(
-                        image: AssetImage('assets/images/Cliente.png'),
+                        image: const AssetImage('assets/images/Cliente.png'),
                         fit: BoxFit.cover,
                       ),
                     ),
