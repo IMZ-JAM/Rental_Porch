@@ -1,5 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
-
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_porch_app/presentation/home_rentador.dart';
@@ -13,6 +12,7 @@ class AgregarPorcheScreen extends StatefulWidget {
 
 class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
   final _formKey = GlobalKey<FormState>();
+  // final _initialCameraPosition = const CameraPosition(target: LatLng(0, 0),);
   TextEditingController _nameController = new TextEditingController();
   TextEditingController _priceController = new TextEditingController();
   TextEditingController _areaController = new TextEditingController();
@@ -20,6 +20,7 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('Agregar Porche'),
@@ -27,7 +28,7 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _formKey,
+          key: _formKey, 
           child: Column(
             children: <Widget>[
               TextFormField(
@@ -72,8 +73,14 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
                 },
               ),              
               const SizedBox(height: 10.0),
-              const Image(
-                image: AssetImage('assets/images/map_point.png'),
+              Container(
+                height: 400,
+                child: GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(0, 0),
+                    zoom: 15,
+                  ),
+                ), 
               ),
               const SizedBox(height: 10.0),
               Row(

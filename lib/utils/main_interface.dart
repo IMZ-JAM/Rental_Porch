@@ -1,4 +1,4 @@
-
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:rental_porch_app/services/firebase_service.dart';
@@ -74,10 +74,17 @@ void showPorchInfoDialog(BuildContext context, String description, double area, 
               ),
             ],
           ),
-          const SizedBox(height: 12,),
+          const SizedBox(height: 50,),
           //Punto del porche en el mapa
-          const Image(
-            image: AssetImage('assets/images/map_point.png'),
+          Container(
+            width: 500,
+            height: 400,
+            child: GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: LatLng(0, 0),
+                zoom: 15,
+              ),
+            ), 
           ),
           
         ],
