@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:rental_porch_app/presentation/map/map_controller.dart';
 
-class MapScreen extends StatefulWidget {
+class MapScreen extends StatelessWidget {
   const MapScreen({super.key});
 
   @override
-  State<MapScreen> createState() => _MapScreenState();
-}
-
-class _MapScreenState extends State<MapScreen> {
-
-  final _initialCameraPosition = const CameraPosition(target: LatLng(0, 0),);
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: GoogleMap(
-        initialCameraPosition: _initialCameraPosition,
+    return ChangeNotifierProvider<MapController>(
+      create: (_) {
+        final controller = MapController();
+        controller.onMarkerTap.listen((String id) {
+          print('got to $id');
+        });
+        return controller;
+      },
+      child: Scaffold(
+        appBar: AppBar(),
+        body: Consumer<MapController>(
+          builder: (_, controller, __) => GoogleMap(
+            onMapCreated: controller.onMapCreated,
+            initialCameraPosition: controller.initialCameraPosition,
+            myLocationButtonEnabled: false,
+            markers: controller.markers,
+            onTap: controller.onTap,
+          ), 
+        ),
       ),
     );
   }

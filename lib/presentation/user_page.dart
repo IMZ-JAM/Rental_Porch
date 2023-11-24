@@ -147,12 +147,12 @@ class MyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: press, 
-      style: ElevatedButton.styleFrom(
-                        
-                        padding: const EdgeInsets.all(16.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50.0),
-                        ),),
+      style: ElevatedButton.styleFrom(                
+        padding: const EdgeInsets.all(16.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50.0),
+        ),
+      ),
       child: lblText,
 
     );

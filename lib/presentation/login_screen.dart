@@ -45,7 +45,6 @@ class _LogInScreenState extends State<LogInScreen> {
                   controller: _emailControllerLogin,
                   enableInteractiveSelection: false,
                   autofocus: true,
-                  textCapitalization: TextCapitalization.characters,
                   decoration: InputDecoration(
                     hintText: 'Ejemplo: porch@gmail.com',
                     labelText: 'Email',

@@ -74,7 +74,7 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
               ),              
               const SizedBox(height: 10.0),
               Container(
-                height: 400,
+                height: 350,
                 child: GoogleMap(
                   initialCameraPosition: CameraPosition(
                     target: LatLng(0, 0),
