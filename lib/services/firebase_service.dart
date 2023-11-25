@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/main_interface.dart';
 import '../utils/user.dart';
 import '../utils/user_porches.dart';
+import 'dart:isolate';
+
 
 FirebaseFirestore database = FirebaseFirestore.instance;
 
@@ -102,40 +104,108 @@ Future<bool> isPorchNameUnrepeatable(String name) async{
 }
 
 
-//Funcion para ver si los datos de login son correctos
-Future<List> getUsers(String email, password) async{
-
+//Funcion de buscar usuario con email y password
+Future<List> getUsers(String email, password) async {
   late String label;
   late bool access;
-  if(email.contains("@") && email.contains(".")){
-    QuerySnapshot users = await database.collection("users").get();
-    if(users.docs.isNotEmpty){
+
+  if (email.contains("@") && email.contains(".")) {
+    
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await database.collection('users').get();
+
+    List<Map<String, dynamic>> usersList = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+    if (usersList.isNotEmpty) {
       access = false;
-      for(var doc in users.docs){
-        Map<String, dynamic> userData = doc.data() as Map<String, dynamic>;
-        if (userData.containsKey("email") && userData.containsKey("password")) {
-          if(userData['email'] == email && userData['password'] == password){
-            User.info['email'] = email;
-            access = true;
-            label = "";
-            await getCurrentUserData();
-            await getCurrentPorchesData();
-            break;
-          }
-        } 
-      }
-      if(!access){
+      int n1 = usersList.length ~/ 2;
+      int n2 = usersList.length;
+
+      late bool access1, access2;
+
+      final receivePort1 = ReceivePort();
+      final receivePort2 = ReceivePort();
+      
+      await Future.wait([
+        Isolate.spawn(firstHalf, {
+          'sendPort': receivePort1.sendPort,
+          'n1': n1,
+          'email': email,
+          'password': password,
+          'access': access,
+          'users': usersList,
+        }),
+        Isolate.spawn(secondHalf, {
+          'sendPort': receivePort2.sendPort,
+          'n1': n1,
+          'n2': n2,
+          'email': email,
+          'password': password,
+          'access': access,
+          'users': usersList, 
+        }),
+      ]);
+
+      access1 = await receivePort1.first;
+      access2 = await receivePort2.first;
+
+      access = access1 || access2;
+
+      if (!access) {
         label = "No existe ningun usuario con este correo y contraseña";
+      } else {
+        User.info['email'] = email;
+        await getCurrentUserData();
+        await getCurrentPorchesData();
+        label = "";
       }
     }
-  }
-  else{
+  } else {
     access = false;
     label = "Ingrese un email correcto";
   }
-  
+
   return [access, label];
 }
+
+Future<void> firstHalf(Map<String, dynamic> params) async {
+  SendPort sendPort = params['sendPort'];
+  int n1 = params['n1'];
+  String email = params['email'];
+  String password = params['password'];
+  bool access = params['access'];
+  List<Map<String,dynamic>> users = await params['users'];
+  
+  for (int i = 0; i < n1; i++) {
+    if (users[i].containsKey("email") && users[i].containsKey("password")) {
+      if (users[i]['email'] == email && users[i]['password'] == password) {
+        access = true;
+        break;
+      }
+    }
+  }
+  sendPort.send(access);
+}
+
+Future<void> secondHalf(Map<String, dynamic> params) async {
+  SendPort sendPort = params['sendPort'];
+  int n1 = params['n1'];
+  int n2 = params['n2'];
+  String email = params['email'];
+  String password = params['password'];
+  bool access = params['access'];
+  List<Map<String,dynamic>> users = await params['users'];
+  for (int i = n1; i < n2; i++) {
+
+    if (users[i].containsKey("email") && users[i].containsKey("password")) {
+      if (users[i]['email'] == email && users[i]['password'] == password) {
+        access = true;
+        break;
+      }
+    }
+  }
+  sendPort.send(access);
+}
+
 
 //Funcion para agregar un nuevo usuario, tambien verifica si los datos dados son correctos
 //Regresa una lista donde [¿Datos son correctos?, texto del mensaje]
