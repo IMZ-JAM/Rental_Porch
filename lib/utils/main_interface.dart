@@ -5,7 +5,6 @@ import 'package:rental_porch_app/services/firebase_service.dart';
 
 import '../presentation/home_rentador.dart';
 
-
 //Mensaje que dura unos segundos
 void showMessage(BuildContext context, String label, Color colorBackGround) {
   showToast(
@@ -42,7 +41,8 @@ bool isStringNotEmpty(String text) {
 }
 
 //Cuadro de dialogo para informacion de cada patio de los rentadores
-void showPorchInfoDialog(BuildContext context, String description, double area, double price, String title, String id) {
+void showPorchInfoDialog(BuildContext context, String description, double area, double price, String title, String id, LatLng porchPosition){
+  
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -76,15 +76,29 @@ void showPorchInfoDialog(BuildContext context, String description, double area, 
           ),
           const SizedBox(height: 50,),
           //Punto del porche en el mapa
-          Container(
-            width: 500,
-            height: 400,
-            child: GoogleMap(
+          SizedBox(
+            width: 400,
+            height: 350,
+            child: 
+            GoogleMap(
               initialCameraPosition: CameraPosition(
-                target: LatLng(0, 0),
+                target: LatLng(porchPosition.latitude, porchPosition.longitude),
                 zoom: 15,
               ),
-            ), 
+              markers: {
+                Marker(
+                  markerId: MarkerId("currentLocation"),
+                  position: porchPosition,
+                  infoWindow: InfoWindow(
+                    title: "Ubicación Actual",
+                    snippet: "Lat: ${porchPosition.latitude}, Lng: ${porchPosition.longitude}",
+                  ),
+                  icon: BitmapDescriptor.defaultMarker, // Puedes cambiar el icono aquí
+                ),
+              },
+            ),
+
+            
           ),
           
         ],
@@ -97,7 +111,10 @@ void showPorchInfoDialog(BuildContext context, String description, double area, 
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text("Cerrar"),
+                child: const Text(
+                  "Cerrar",
+                  style: TextStyle(color: Colors.black),
+                  ),  
               ),
               
               ElevatedButton(
@@ -105,9 +122,12 @@ void showPorchInfoDialog(BuildContext context, String description, double area, 
                   backgroundColor: Colors.green
                 ),
                 onPressed: (){
-                  showEditPorchDialog(context,id);
+                  showEditPorchDialog(context,id, porchPosition);
                 }, 
-                child: const Text("Editar")
+                child: const Text(
+                  "Editar",
+                  style: TextStyle(color: Colors.black),
+                  )
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -116,7 +136,10 @@ void showPorchInfoDialog(BuildContext context, String description, double area, 
                 onPressed: (){
                   showDeletePorchDialog(context, title, id);
                 }, 
-                child: const Text("Eliminar")
+                child: const Text(
+                  "Eliminar",
+                  style: TextStyle(color: Colors.black),
+                  )
               )
           ],)
           
@@ -147,7 +170,10 @@ void showDeletePorchDialog(BuildContext context, String name, String id) {
               onPressed: (){
                 Navigator.of(context).pop();
               }, 
-              child: const Text("Cancelar")
+              child: const Text(
+                "Cancelar",
+                style: TextStyle(color: Colors.black),
+                )
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -158,7 +184,10 @@ void showDeletePorchDialog(BuildContext context, String name, String id) {
                 // ignore: use_build_context_synchronously
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeRentador()));  
               },
-              child: const Text("Eliminar"),
+              child: const Text(
+                "Eliminar",
+                style: TextStyle(color: Colors.black),
+                ),
             )
           ],)
         ],
@@ -173,8 +202,9 @@ class EditPorchDialog extends StatefulWidget {
   @override
   // ignore: library_private_types_in_public_api
   _EditPorchDialogState createState() => _EditPorchDialogState();
-  EditPorchDialog({super.key, required this.id});
+  EditPorchDialog({super.key, required this.id, required this.location});
   String id;
+  LatLng location;
 }
 
 class _EditPorchDialogState extends State<EditPorchDialog> {
@@ -188,15 +218,23 @@ class _EditPorchDialogState extends State<EditPorchDialog> {
   TextEditingController priceController = TextEditingController();
   TextEditingController nameController = TextEditingController();
 
+  late GoogleMapController _controller;
+  late LatLng _newPorchPosition;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _newPorchPosition = LatLng(widget.location.latitude, widget.location.longitude);
+
+  }
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Editar patio'),
-      content: SizedBox(
-        height: 340,
+      content: SingleChildScrollView(
         child: Column(
           children: [
-            const Text("Lo que este con equis no se actualizará, solo quite la equis a lo que quiera cambiar"),
+            const Text("Lo que este con x no se actualizará, solo quite la equis a lo que quiera cambiar"),
              Row(
              mainAxisAlignment: MainAxisAlignment.spaceBetween,
              children: [
@@ -262,9 +300,50 @@ class _EditPorchDialogState extends State<EditPorchDialog> {
                 )
               ],
             ),
+            SizedBox(height: 10,),
+            Text("Cambiar ubicación del mapa"),
+            SizedBox(height: 10,),
+            SizedBox(
+              height: 500,
+              child: 
+              GoogleMap(
+                   initialCameraPosition: CameraPosition(
+                  target: LatLng(widget.location.latitude, widget.location.longitude),
+                  zoom: 15,
+                ),
+                onMapCreated: (GoogleMapController controller) {
+                  _controller = controller;
+                },
+                onLongPress: (LatLng latLng) {
+                  setState(() {
+                    _newPorchPosition = latLng;
+                  });
+                  _controller.animateCamera(CameraUpdate.newLatLng(_newPorchPosition));
+                },
+                markers: {
+                  Marker(
+                    markerId: const MarkerId("currentLocation"),
+                    position: _newPorchPosition,
+                    infoWindow: InfoWindow(
+                      title: "Ubicación Actual",
+                      snippet: "Lat: ${_newPorchPosition.latitude}, Lng: ${_newPorchPosition.longitude}",
+                    ),
+                    icon: BitmapDescriptor.defaultMarker,
+                    draggable: true, // Hace que el marcador sea arrastrable
+                    onDragEnd: (LatLng newPosition) {
+                      setState(() {
+                        // Actualiza la posición del marcador cuando el usuario finaliza el arrastre
+                        _newPorchPosition = newPosition;
+                      });
+                    },
+                  ),
+                },
+              ),
+            )
           ],
         ),
       ),
+      
       actions: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -274,9 +353,13 @@ class _EditPorchDialogState extends State<EditPorchDialog> {
                 backgroundColor: Colors.red,
               ),
               onPressed: () {
+                //showMapToEdit(context, widget.location);
                 Navigator.of(context).pop();
               },
-              child: const Text("Cancelar"),
+              child: const Text(
+                "Cancelar",
+                style: TextStyle(color: Colors.black),
+                ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -288,18 +371,18 @@ class _EditPorchDialogState extends State<EditPorchDialog> {
                   if(!areaType) {
                     newArea = 0;
                   } else{
-                    newArea =double.parse(areaController.text);
+                    newArea = double.parse(areaController.text);
                   }
                   if(!priceType) {
                     newPrice = 0;
                   } else{
-                    newPrice =double.parse(priceController.text);
+                    newPrice = double.parse(priceController.text);
                   }
-                  await updatePorch(widget.id, nameController.text, descriptionController.text,newArea,newPrice, nameType, descriptionType, areaType, priceType);
+                  await updatePorch(widget.id, nameController.text, descriptionController.text,newArea,newPrice, nameType, descriptionType, areaType, priceType, _newPorchPosition);
                   // ignore: use_build_context_synchronously
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeRentador()));
                   // ignore: use_build_context_synchronously
-                  showMessage(context, "Cambios  guardados", const Color.fromARGB(127, 0, 255, 8));
+                  showMessage(context, "Cambios guardados", const Color.fromARGB(127, 0, 255, 8));
                 }
                 else{
                   // ignore: use_build_context_synchronously
@@ -307,7 +390,10 @@ class _EditPorchDialogState extends State<EditPorchDialog> {
                 }
                 
               },
-              child: const Text("Guardar cambios"),
+              child: const Text(
+                "Guardar cambios",
+                style: TextStyle(color: Colors.black),
+              ),
             )
           ],
         ),
@@ -315,11 +401,11 @@ class _EditPorchDialogState extends State<EditPorchDialog> {
     );
   }
 }
-void showEditPorchDialog(BuildContext context, String id) {
+void showEditPorchDialog(BuildContext context, String id, LatLng location) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return EditPorchDialog(id:id);
+      return EditPorchDialog(id:id, location: location);
     },
   );
 }
