@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -5,18 +7,34 @@ import 'package:rental_porch_app/presentation/home_rentador.dart';
 import 'package:rental_porch_app/services/firebase_service.dart';
 import 'package:rental_porch_app/utils/main_interface.dart';
 
+import '../utils/user.dart';
+
 class AgregarPorcheScreen extends StatefulWidget {
+  const AgregarPorcheScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _AgregarPorcheScreenState createState() => _AgregarPorcheScreenState();
 }
 
 class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
   final _formKey = GlobalKey<FormState>();
   // final _initialCameraPosition = const CameraPosition(target: LatLng(0, 0),);
-  TextEditingController _nameController = new TextEditingController();
-  TextEditingController _priceController = new TextEditingController();
-  TextEditingController _areaController = new TextEditingController();
-  TextEditingController _descriptionController = new TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _areaController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+
+  late GoogleMapController _controller;
+  late LatLng _currentPosition;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _currentPosition = LatLng(User.currentPosition.latitude, User.currentPosition.longitude);
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,14 +91,43 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
                 },
               ),              
               const SizedBox(height: 10.0),
-              Container(
-                height: 350,
+              SizedBox(
+                height: 290,
+                
                 child: GoogleMap(
-                  initialCameraPosition: CameraPosition(
-                    target: LatLng(0, 0),
-                    zoom: 15,
+                   initialCameraPosition: CameraPosition(
+                  target: LatLng(User.currentPosition.latitude, User.currentPosition.longitude),
+                  zoom: 15,
+                ),
+                onMapCreated: (GoogleMapController controller) {
+                  _controller = controller;
+                },
+                onLongPress: (LatLng latLng) {
+                  setState(() {
+                    _currentPosition = latLng;
+                  });
+                  _controller.animateCamera(CameraUpdate.newLatLng(_currentPosition));
+                },
+                markers: {
+                  Marker(
+                    markerId: const MarkerId("currentLocation"),
+                    position: _currentPosition,
+                    infoWindow: InfoWindow(
+                      title: "Ubicación Actual",
+                      snippet: "Lat: ${_currentPosition.latitude}, Lng: ${_currentPosition.longitude}",
+                    ),
+                    icon: BitmapDescriptor.defaultMarker,
+                    draggable: true, // Hace que el marcador sea arrastrable
+                    onDragEnd: (LatLng newPosition) {
+                      setState(() {
+                        // Actualiza la posición del marcador cuando el usuario finaliza el arrastre
+                        _currentPosition = newPosition;
+                      });
+                    },
                   ),
-                ), 
+                },
+              ),
+
               ),
               const SizedBox(height: 10.0),
               Row(
@@ -89,7 +136,8 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
                 ElevatedButton(
                 onPressed: () async{
                   if(_formKey.currentState!.validate() && await isPorchNameUnrepeatable(_nameController.text)) {
-                    await addPorch(_nameController.text, _descriptionController.text, double.parse(_priceController.text), double.parse(_areaController.text), const GeoPoint(3, 3));
+                    await addPorch(_nameController.text, _descriptionController.text, double.parse(_priceController.text), double.parse(_areaController.text), GeoPoint(_currentPosition.latitude, _currentPosition.longitude));
+                    
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeRentador()));  
                     showMessage(context, "Patio agregado", const Color.fromARGB(127, 0, 255, 8));
                   }
