@@ -1,7 +1,10 @@
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:rental_porch_app/services/email_service.dart';
 import 'package:rental_porch_app/services/firebase_service.dart';
+import 'package:rental_porch_app/utils/user.dart';
 
 import '../presentation/home_rentador.dart';
 
@@ -87,7 +90,7 @@ void showPorchInfoDialog(BuildContext context, String description, double area, 
               ),
               markers: {
                 Marker(
-                  markerId: MarkerId("currentLocation"),
+                  markerId: const MarkerId("currentLocation"),
                   position: porchPosition,
                   infoWindow: InfoWindow(
                     title: "Ubicación Actual",
@@ -300,9 +303,9 @@ class _EditPorchDialogState extends State<EditPorchDialog> {
                 )
               ],
             ),
-            SizedBox(height: 10,),
-            Text("Cambiar ubicación del mapa"),
-            SizedBox(height: 10,),
+            const SizedBox(height: 10,),
+            const Text("Cambiar ubicación del mapa"),
+            const SizedBox(height: 10,),
             SizedBox(
               height: 500,
               child: 
@@ -440,3 +443,277 @@ class PorchInput extends StatelessWidget {
   }
 }
 
+
+//Cuadro de informacion de los porches para los clientes
+
+//Cuadro de dialogo para informacion de cada patio de los rentadores
+void showClientsPorchInfoDialog(BuildContext context, String description, double area, double price, String title, String id, LatLng porchPosition, String rentadorId){
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: 
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children:[ 
+            Text(
+              title,
+              style: const TextStyle(fontSize: 18),
+            ), 
+            IconButton(
+              onPressed: ()async{
+                Map<String, dynamic> rentadorInfo = await getSpecificDataUser(rentadorId);
+                // ignore: use_build_context_synchronously
+                showRentadorInformation(context, rentadorInfo);
+              }, 
+              icon: const Icon(Icons.person)
+            )
+            
+          ]),
+        content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(description),
+          const SizedBox(height: 12,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [ 
+              const Text("Area"),
+              Text(
+                "${area}m²",
+                textAlign: TextAlign.left,
+              ),
+            ],
+          ),
+          const SizedBox(height: 12,),
+           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [ 
+              const Text("Precio por día"),
+              Text(
+                "\$$price",
+                textAlign: TextAlign.left,
+              ),
+            ],
+          ),
+          const SizedBox(height: 50,),
+          //Punto del porche en el mapa
+          SizedBox(
+            width: 400,
+            height: 350,
+            child: 
+            GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: LatLng(porchPosition.latitude, porchPosition.longitude),
+                zoom: 15,
+              ),
+              markers: {
+                Marker(
+                  markerId: const MarkerId("currentLocation"),
+                  position: porchPosition,
+                  infoWindow: InfoWindow(
+                    title: "Ubicación Actual",
+                    snippet: "Lat: ${porchPosition.latitude}, Lng: ${porchPosition.longitude}",
+                  ),
+                  icon: BitmapDescriptor.defaultMarker, // Puedes cambiar el icono aquí
+                ),
+              },
+            ),
+          ),
+        ],
+      ),
+        actions: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  "Cerrar",
+                  style: TextStyle(color: Colors.black),
+                  ),  
+              ),
+              
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue
+                ),
+                onPressed: (){
+                  showDialogForReservationEmail(context, rentadorId, id);
+                }, 
+                child: const Text(
+                  "Pedir reservación",
+                  style: TextStyle(color: Colors.black),
+                  )
+              ),
+          ],)
+          
+        ],
+      );
+    },
+  );
+}
+
+//Mostrar informacion de rentador del porche
+void showRentadorInformation(BuildContext context, Map<String,dynamic> info){
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text(''),
+        content: 
+        SizedBox(
+          height: 100,
+          child: Column(
+          
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(children:[ const Text("Nombre: "), Text(info['name'])]),
+            Row(children:[ const Text("Telefono: "), Text(info['phoneNumber'])]),
+            Row(children:[ const Text("Email: "), Text(info['email'])]),
+          ],
+        ),),
+        
+        actions: <Widget>[
+          
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  "Cerrar",
+                  style: TextStyle(color: Colors.black),
+                  ),  
+              ),
+          
+        ],
+      );
+    },
+  );
+}
+
+
+class DialogForReservation extends StatefulWidget{
+  const DialogForReservation ({super.key, required this.porcheId, required this.rentadorId});
+  final String porcheId, rentadorId;
+  @override
+  State<DialogForReservation> createState() => _DialogForReservationState();
+}
+
+class _DialogForReservationState extends State<DialogForReservation>{
+  late DateTime date;
+  late TimeOfDay time;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    date = DateTime.now();
+    time = TimeOfDay.now();
+  }
+  @override
+  Widget build(BuildContext context){
+    return AlertDialog(
+      title: const Text('Reservacion de porche'),
+        content: 
+        SizedBox(
+          height: 150,
+          child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Se enviará un email al rentador con la solicitud de reservación, y tendra su respuesta pronto"),
+            Text("Se puede comunicar con los datos de contacto dados en su perfil"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children:[
+                Text(
+                  date.toString().substring(0,10),
+                  style: const TextStyle(fontSize: 20),
+                ),
+                IconButton(
+                  onPressed:() {
+                   showCalendar(context);
+                  }, 
+                  icon: const Icon(Icons.calendar_month)
+                )
+            ]),  
+          ],
+        ),
+        ),
+        actions: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  "Cerrar",
+                  style: TextStyle(color: Colors.black),
+                  ),  
+              ),
+              
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue
+                ),
+                onPressed: ()async{
+                  DateTime finalDate = DateTime(date.year, date.month, date.day);
+                  Map<String, dynamic> rentadorInfo = await getSpecificDataUser(widget.rentadorId);
+                  sendEmailForReservation(widget.rentadorId, widget.porcheId, Timestamp.fromDate(finalDate), rentadorInfo);
+                  showMessage(context, 'Reseración enviada', const Color.fromARGB(127, 0, 255, 8));
+                }, 
+                child: const Text(
+                  "Enviar reservación",
+                  style: TextStyle(color: Colors.black),
+                  )
+              ),
+          ],)
+          
+        ],
+    );
+  }
+  
+  Future<void> showCalendar(BuildContext context) async {
+    // Obtiene la fecha seleccionada
+    DateTime? date1 = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2030),
+    );
+    if (date1 != null) {
+      setState(() {
+        date = date1;  
+      });  
+    }
+   
+  }
+}
+//Cuadro para mandar correo con reservacion
+void showDialogForReservationEmail(BuildContext context, idRentador, idPorche){
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return  DialogForReservation(
+        porcheId: idPorche,
+        rentadorId: idRentador
+      );
+    },
+  );
+}
+
+void sendEmailForReservation(String rentadorId, porcheId, Timestamp date, Map<String, dynamic> rentadorInfo)async{
+  Map<String, dynamic> porchInfo = await getSpecificDataPorch(porcheId);
+  String message = 'Fecha de resevacion: ${(date.toDate()).toString().substring(0,10)}\nPorche: ${porchInfo['name']}\nNombre de cliente: ${User.info['name']}\nTelefono: ${User.info['phoneNumber']}\nEmail: ${User.info['email']}';
+  await addReservation(rentadorId, porcheId, date);
+  await sendEmailToAskRes(
+    name: rentadorInfo['name'], 
+    toEmail: rentadorInfo['email'], 
+    replyToEmail: User.info['email'], 
+    message: message, 
+    clientName: User.info['name']
+  );
+}
