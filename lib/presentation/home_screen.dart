@@ -20,9 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
   // Función que se ejecuta cuando se presiona un contenedor
   void _onContainerPressed(BuildContext context, String text) {
     // Aquí puedes agregar la lógica que desees cuando se presione un contenedor
-    
   }
-  void changeFavIcon(){
+  void changeFavIcon() {
     setState(() {
       _favoritePorches = List<bool>.from(AllPorches.favoritePorches);
     });
@@ -32,47 +31,46 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: Menu(context),
-      appBar: AppBar(
-          title: const Text('Bienvenido a Rental-Porch')),
-      body: 
-          Container(
+      appBar: AppBar(title: const Text('Bienvenido a Rental-Porch')),
+      body: Container(
         margin: const EdgeInsets.all(10),
         child: ListView.builder(
-          itemCount: AllPorches.porchesId.length, 
-          itemBuilder: (context, index){
+          itemCount: AllPorches.porchesId.length,
+          itemBuilder: (context, index) {
             return Card(
               child: ListTile(
-                title:
-                Row(
+                title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('${AllPorches.porchesInfo[index]["name"]}'),
                     IconButton(
-                      onPressed: ()async{
-                        if(!AllPorches.favoritePorches[index]){
-                          await addPorchToFavorite(AllPorches.porchesId[index]);
-                        }
-                        else{
-                          await removePorchToFavorite(AllPorches.porchesId[index]);
-                        }
-                        changeFavIcon();
-                      }, 
-                      icon: Icon(
-                          _favoritePorches[index] ? Icons.favorite:Icons.favorite_outline
-                      )
-                    )
-                ],),
-                onTap: (){
-                  showClientsPorchInfoDialog(context, 
-                  AllPorches.porchesInfo[index]['description'],
-                  AllPorches.porchesInfo[index]['area'].toDouble(), 
-                  AllPorches.porchesInfo[index]['rentPricePerDay'].toDouble(), 
-                  AllPorches.porchesInfo[index]['name'], 
-                  AllPorches.porchesId[index], 
-                  LatLng(AllPorches.porchesInfo[index]['location'].latitude, 
-                  AllPorches.porchesInfo[index]['location'].longitude),
-                  AllPorches.porchesInfo[index]['idOwner']
-                );
+                        onPressed: () async {
+                          if (!AllPorches.favoritePorches[index]) {
+                            await addPorchToFavorite(
+                                AllPorches.porchesId[index]);
+                          } else {
+                            await removePorchToFavorite(
+                                AllPorches.porchesId[index]);
+                          }
+                          changeFavIcon();
+                        },
+                        icon: Icon(_favoritePorches[index]
+                            ? Icons.favorite
+                            : Icons.favorite_outline))
+                  ],
+                ),
+                onTap: () {
+                  showClientsPorchInfoDialog(
+                      context,
+                      AllPorches.porchesInfo[index]['description'],
+                      AllPorches.porchesInfo[index]['area'].toDouble(),
+                      AllPorches.porchesInfo[index]['rentPricePerDay']
+                          .toDouble(),
+                      AllPorches.porchesInfo[index]['name'],
+                      AllPorches.porchesId[index],
+                      LatLng(AllPorches.porchesInfo[index]['location'].latitude,
+                          AllPorches.porchesInfo[index]['location'].longitude),
+                      AllPorches.porchesInfo[index]['idOwner']);
                 },
               ),
             );
@@ -80,84 +78,142 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-
   }
+
   Drawer Menu(BuildContext context) {
     return Drawer(
       child: Container(
-        color: Colors.blue,
-        child: Column(
-          children: [
-            Container(
-              width: 100,
-              height: 100,
-              margin: const EdgeInsets.all(25),
-              child: Image.network(
-                  "https://cdn-icons-png.flaticon.com/512/7429/7429878.png"),
-            ),
-            const Text("Menu",
-                style:
-                TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-            InkWell(
-              onTap: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const UserPage()));},
-              child: Container(
-                margin: const EdgeInsets.only(top: 10),
-                padding: const EdgeInsets.all(15),
-                width: double.infinity,
-                color: Colors.grey[100],
-                child: const Text("Perfil"),
+        color: const Color.fromARGB(255, 188, 220, 246),
+        child: Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 37,
               ),
-            ),
-            InkWell(
-              onTap: () {Navigator.push(context, MaterialPageRoute(builder: (context) => TipoUsuarioScreen()));},
-              child: Container(
-                margin: const EdgeInsets.only(top: 10),
-                padding: const EdgeInsets.all(15),
-                width: double.infinity,
-                color: Colors.grey[100],
-                child: const Text("Elegir tipo de usuario"),
+              Container(
+                width: 110,
+                height: 110,
+                margin: const EdgeInsets.all(25),
+                child: Image.network(
+                    "https://cdn-icons-png.flaticon.com/512/7429/7429878.png"),
               ),
-            ),
-            Expanded(child: Container()),
-            const Text("Favoritos",
-                style:
-                TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
+              const SizedBox(
+                height: 10,
               ),
-            SizedBox( 
-              height: 350,
-              child:SingleChildScrollView(
-                child: Column(children: [
-                  if(AllPorches.favoritePorches.isNotEmpty)
-                    for(int i=0;i<AllPorches.porchesId.length;i++)
-                      if(AllPorches.favoritePorches[i])
-                      InkWell(
-                        onTap: () => _onContainerPressed(context, "Patio"),
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 10),
-                          padding: const EdgeInsets.all(10),
-                          width: double.infinity,
-                          color: Colors.grey[100],
-                          child: Text(AllPorches.porchesInfo[i]['name']),
-                        ),
-                      ),
-                ]),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("Favoritos",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+                  Icon(
+                    Icons.favorite,
+                    color: Colors.red,
+                  ),
+                ],
               ),
-            ),            
-            Expanded(child: Container()),
-            InkWell(
-              onTap: () { Navigator.push(context, MaterialPageRoute(builder: (context) => const LogInScreen()));},
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                margin: const EdgeInsets.only(bottom: 2, top: 2),
-                width: double.infinity,
-                color: Colors.black87,
-                alignment: Alignment.center,
-                child: const Text("Cerrar Sesión",
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold)),
+              const SizedBox(
+                height: 4,
               ),
-            ),
-          ],
+              SizedBox(
+                height: 350,
+                child: SingleChildScrollView(
+                  child: Column(children: [
+                    if (AllPorches.favoritePorches.isNotEmpty)
+                      for (int i = 0; i < AllPorches.porchesId.length; i++)
+                        if (AllPorches.favoritePorches[i])
+                          InkWell(
+                            onTap: () => _onContainerPressed(context, "Patio"),
+                            child: Container(
+                              margin: const EdgeInsets.only(top: 10),
+                              padding: const EdgeInsets.all(10),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.grey[100],
+                              ),
+                              child: Text(AllPorches.porchesInfo[i]['name']),
+                            ),
+                          ),
+                  ]),
+                ),
+              ),
+              Expanded(child: Container()),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.settings,
+                    color: Color.fromARGB(255, 125, 115, 115),
+                  ),
+                  Text(" Configuración",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+                ],
+              ),
+              const SizedBox(height: 3),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const UserPage()));
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 3),
+                  padding: const EdgeInsets.all(15),
+                  width: double.infinity,
+                  child: const Text("Perfil"),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.grey[100],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TipoUsuarioScreen()));
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 3),
+                  padding: const EdgeInsets.all(15),
+                  width: double.infinity,
+                  child: const Text("Elegir Tipo de Usuario"),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.grey[100],
+                  ),
+                ),
+              ),
+              SizedBox(height: 60),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LogInScreen()));
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  margin: const EdgeInsets.only(bottom: 2, top: 2),
+                  width: double.infinity,
+                  color: Color.fromARGB(221, 67, 79, 77),
+                  alignment: Alignment.center,
+                  child: const Text("Cerrar Sesión",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15)),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
