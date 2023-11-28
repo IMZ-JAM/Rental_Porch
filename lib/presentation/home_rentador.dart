@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rental_porch_app/presentation/AgrPor.dart';
 import 'package:rental_porch_app/presentation/login_screen.dart';
+import 'package:rental_porch_app/presentation/reservations_screen.dart';
 import 'package:rental_porch_app/presentation/user_page.dart';
 import 'package:rental_porch_app/utils/main_interface.dart';
 import 'package:rental_porch_app/utils/user_porches.dart';
+
+import '../utils/user.dart';
+
 
 class HomeRentador extends StatefulWidget {
   const HomeRentador({super.key});
@@ -31,7 +37,10 @@ class HomeRentadorState extends State<HomeRentador>{
                   style:
                   TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
               InkWell(
-                onTap: () { 
+                onTap: ()async{ 
+                   User.currentPosition = await Geolocator.getCurrentPosition(
+                    desiredAccuracy: LocationAccuracy.high,
+                  );
                   Navigator.push(context, MaterialPageRoute(builder: (context) => AgregarPorcheScreen()));
                 },
                 child: Container(
@@ -44,10 +53,10 @@ class HomeRentadorState extends State<HomeRentador>{
               ),
               InkWell(
                 onTap: () { 
-                  // Aquí va la lógica para "Lista de Reservas"
+                   Navigator.push(context, MaterialPageRoute(builder: (context) => const ReservationsScreen()));
                 },
                 child: Container(
-                  margin: const EdgeInsets.only(top: 2),
+                  margin: const EdgeInsets.only(top: 30),
                   padding: const EdgeInsets.all(15),
                   width: double.infinity,
                   color: Colors.grey[100],
@@ -97,8 +106,12 @@ class HomeRentadorState extends State<HomeRentador>{
             return Card(
               child: ListTile(
                 title: Text('${UserPorches.porchesInfo[index]["name"]}'),
-                onTap: () {
-                  showPorchInfoDialog(context, UserPorches.porchesInfo[index]['description'],UserPorches.porchesInfo[index]['area'].toDouble(), UserPorches.porchesInfo[index]['rentPricePerDay'].toDouble(), UserPorches.porchesInfo[index]['name'], UserPorches.porchesId[index]);
+                onTap: ()async{
+                  User.currentPosition = await Geolocator.getCurrentPosition(
+                    desiredAccuracy: LocationAccuracy.high,
+                  );
+                  // ignore: use_build_context_synchronously
+                  showPorchInfoDialog(context, UserPorches.porchesInfo[index]['description'],UserPorches.porchesInfo[index]['area'].toDouble(), UserPorches.porchesInfo[index]['rentPricePerDay'].toDouble(), UserPorches.porchesInfo[index]['name'], UserPorches.porchesId[index], LatLng(UserPorches.porchesInfo[index]['location'].latitude, UserPorches.porchesInfo[index]['location'].longitude));
                 },
               ),
             );
@@ -107,6 +120,7 @@ class HomeRentadorState extends State<HomeRentador>{
       ),
     );
   }
+    
 }
 
 
