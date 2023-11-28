@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:rental_porch_app/utils/all_porches.dart';
 
 import '../utils/main_interface.dart';
+import '../utils/reservations.dart';
 import '../utils/user.dart';
 import '../utils/user_porches.dart';
 import 'dart:isolate';
@@ -27,10 +30,56 @@ Future<void> getCurrentPorchesData() async{
   }
 }
 
+//Porches para cliente
+//Funcion para obtener todos los porches, menos los del rentador
+Future<void> getCurrentAllPorchesData()async{
+  QuerySnapshot allPorchesQS = await database.collection('porches').get();
+  AllPorches.favoritePorches = [];
+  AllPorches.porchesId = [];
+  AllPorches. porchesInfo = [];
+  for(var doc in allPorchesQS.docs){
+    Map<String, dynamic> userData = doc.data() as Map<String, dynamic>;
+    if(userData['idOwner'] != User.id){
+      if(User.info['favoritePorches'].contains(doc.id)){
+        AllPorches.favoritePorches.add(true);
+      }
+      else{
+        AllPorches.favoritePorches.add(false);
+      }
+      AllPorches.porchesId.add(doc.id);
+      AllPorches.porchesInfo.add(userData);
+    }
+  }
+}
+
+//Obtener la informacion de las reservaciones
+Future<void> getCurrentReservationsData()async{
+  Reservations.id = [];
+  Reservations.info = [];
+  QuerySnapshot resvDataQS = await database.collection("reservations").where("rentadorId", isEqualTo: User.id).get();
+    for(var doc in resvDataQS.docs){
+      Reservations.id.add(doc.id);
+      Reservations.info.add(doc.data() as Map<String, dynamic>); 
+  }
+  print(Reservations.info);
+}
+
+Future<void> addReservation(String rentadorId, porcheId, Timestamp date)async{
+  
+  await database.collection("reservations").add({
+    'clientId': User.id,
+    'clientName': User.info['name'],
+    'rentadorId': rentadorId,
+    'porcheId': porcheId,
+    'accepted': false,
+    'date': date,
+  });
+}
+
 Future<void> addPorch(String name, description, double price, area, GeoPoint location)async{
   //GeoPoint location = GeoPoint(1, 3);  asi se declara un punto geografico
   //location será la localizacion del porche
-  DocumentReference porchRef = await FirebaseFirestore.instance.collection("porches").add({
+  DocumentReference porchRef = await database.collection("porches").add({
     "name": name,
     "description": description,
     "rentPricePerDay": price,
@@ -39,7 +88,7 @@ Future<void> addPorch(String name, description, double price, area, GeoPoint loc
     "location": location,
   });
 
-  DocumentReference documentReference = FirebaseFirestore.instance.collection("users").doc(User.id);
+  DocumentReference documentReference = database.collection("users").doc(User.id);
   await documentReference.update({
     "porches": FieldValue.arrayUnion([porchRef.id]),
   });
@@ -51,8 +100,8 @@ Future<void> addPorch(String name, description, double price, area, GeoPoint loc
 
 //Eliminar el porche del id
 Future<void> deletePorch(String id)async{
-   await FirebaseFirestore.instance.collection('porches').doc(id).delete();
-   await FirebaseFirestore.instance.collection('users').doc(User.id).update({
+   await database.collection('porches').doc(id).delete();
+   await database.collection('users').doc(User.id).update({
       'porches': FieldValue.arrayRemove([id]),
     });
    await getCurrentUserData();
@@ -60,9 +109,15 @@ Future<void> deletePorch(String id)async{
 }
 
 //Actualizar un porche
-Future<void> updatePorch(String id, newName, newDescription,double newArea, newPrice, bool nameType, descriptionType, areaType, priceType)async{
+Future<void> updatePorch(String id, newName, newDescription,double newArea, newPrice, bool nameType, descriptionType, areaType, priceType, LatLng newLocation)async{
   DocumentReference porchRef = database.collection("porches").doc(id);
   Map<String, dynamic> updatedData = {};
+  bool locationType = false;
+  int index = UserPorches.porchesId.indexOf(id);
+  if(UserPorches.porchesInfo[index]['location']!=GeoPoint(newLocation.latitude, newLocation.longitude)){
+    updatedData = {'location':GeoPoint(newLocation.latitude, newLocation.longitude)};
+    locationType = true;
+  }  
   if(nameType){
     updatedData['name'] = newName;
   }
@@ -75,7 +130,7 @@ Future<void> updatePorch(String id, newName, newDescription,double newArea, newP
   if(priceType){
     updatedData['price'] = newPrice;
   }
-  if(priceType || areaType || descriptionType || nameType){
+  if(priceType || areaType || descriptionType || nameType || locationType){
     await porchRef.update(updatedData);
     await getCurrentPorchesData();
   }
@@ -156,6 +211,8 @@ Future<List> getUsers(String email, password) async {
         User.info['email'] = email;
         await getCurrentUserData();
         await getCurrentPorchesData();
+        await getCurrentAllPorchesData();
+        await getCurrentReservationsData();
         label = "";
       }
     }
@@ -214,7 +271,7 @@ Future<List> addUsers(String name, email, password, phoneNumber) async{
   if(isStringNotEmpty(name) && isStringNotEmpty(email) && isStringNotEmpty(password)){
     if(await isEmailUnrepeatable(email)){
       if(email.contains("@") && email.contains(".") && isPhoneNumber(phoneNumber)){
-      await database.collection("users").add({"name":name, "email":email, "password":password, "phoneNumber": phoneNumber,"porches":[]});
+      await database.collection("users").add({"name":name, "email":email, "password":password, "phoneNumber": phoneNumber,"porches":[], 'favoritePorches':[]});
       list.add(true);
       list.add("Registro existoso");
     }else{
@@ -281,3 +338,59 @@ Future<void> updateUser(String newName, String newEmail, String newPassword, Str
   }
 }
 
+Future<void> addPorchToFavorite(String newPorcheId)async{
+
+
+  DocumentReference documentReference = database.collection("users").doc(User.id);
+  await documentReference.update({
+    "favoritePorches": FieldValue.arrayUnion([newPorcheId]),
+  });
+  await getCurrentUserData();
+  await getCurrentAllPorchesData();
+}
+
+Future<void> removePorchToFavorite(String newPorcheId)async{
+  DocumentReference documentReference = database.collection("users").doc(User.id);
+  await documentReference.update({
+    "favoritePorches": FieldValue.arrayRemove([newPorcheId]),
+  });
+  await getCurrentUserData();
+  await getCurrentAllPorchesData();
+}
+
+Future<Map<String, dynamic>> getSpecificDataUser(String id)async{  
+  DocumentReference documentReference = database.collection("users").doc(id);
+  DocumentSnapshot doc = await documentReference.get();
+  return doc.data() as Map<String, dynamic>; 
+}
+
+Future<Map<String, dynamic>> getSpecificDataPorch(String id)async{  
+  DocumentReference documentReference = database.collection("porches").doc(id);
+  DocumentSnapshot doc = await documentReference.get();
+  return doc.data() as Map<String, dynamic>; 
+}
+
+Future<Map<String, dynamic>> getSpecificReservationPorch(String id)async{  
+  DocumentReference documentReference = database.collection("reservation").doc(id);
+  DocumentSnapshot doc = await documentReference.get();
+  return doc.data() as Map<String, dynamic>; 
+}
+
+
+Future<void> acceptReservation(String id)async{
+  DocumentReference userRef = database.collection("reservations").doc(id);
+  await userRef.update({'accepted':true});
+  await getCurrentReservationsData();
+  //Mandar correo de que la reservacion se acepto
+}
+
+Future<void> declineReservation(String id)async{
+  //Mandar correo de que la reservacion se rechazo
+  await deleteReservation(id);
+  await getCurrentReservationsData();
+}
+
+Future<void> deleteReservation(String id)async{
+  await database.collection('reservations').doc(id).delete();
+  await getCurrentReservationsData();
+}
