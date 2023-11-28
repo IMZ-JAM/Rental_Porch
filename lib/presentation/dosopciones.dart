@@ -85,7 +85,7 @@ class TipoUsuarioScreen extends StatelessWidget {
                     children: [
                       Positioned.fill(
                         child: Ink.image(
-                          image: const AssetImage('assets/images/Cliente.png'),
+                          image: const AssetImage('assets/images/Cliente1.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
