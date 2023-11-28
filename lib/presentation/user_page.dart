@@ -71,6 +71,7 @@ class _userControllerState extends State<UserPage>{
                     "Guardar cambios",
                      style: TextStyle(
                       fontFamily: 'PlaypenSans',
+
                      )
                   ), 
                   press: () => {_saveChanges()}

@@ -7,6 +7,7 @@ import 'package:rental_porch_app/presentation/home_rentador.dart';
 import 'package:rental_porch_app/services/firebase_service.dart';
 import 'package:rental_porch_app/utils/main_interface.dart';
 
+
 import '../utils/user.dart';
 
 class AgregarPorcheScreen extends StatefulWidget {
@@ -37,8 +38,7 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
+    return Scaffold(resizeToAvoidBottomInset: false,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('Agregar Porche'),
