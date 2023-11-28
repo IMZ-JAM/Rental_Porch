@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:rental_porch_app/presentation/map/map_screen.dart';
 import 'package:rental_porch_app/presentation/map/request_permission/request_permission_controller.dart';
 import 'package:rental_porch_app/presentation/map/routes/routes.dart';
 
