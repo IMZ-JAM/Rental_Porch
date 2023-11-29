@@ -107,14 +107,11 @@ void showPorchInfoDialog(BuildContext context, String description, double area, 
                     title: "Ubicación Actual",
                     snippet: "Lat: ${porchPosition.latitude}, Lng: ${porchPosition.longitude}",
                   ),
-                  icon: BitmapDescriptor.defaultMarker, // Puedes cambiar el icono aquí
+                  icon: BitmapDescriptor.defaultMarker, 
                 ),
               },
             ),
-
-            
           ),
-          
         ],
       ),
         actions: <Widget>[
@@ -151,7 +148,7 @@ void showPorchInfoDialog(BuildContext context, String description, double area, 
                   showDeletePorchDialog(context, title, id);
                 }, 
                 child: const Text(
-                  "Eliminar",
+                  "Borrar",
                   style: TextStyle(color: Colors.black),
                   )
               )
@@ -390,7 +387,17 @@ class _EditPorchDialogState extends State<EditPorchDialog> {
                   } else{
                     newPrice = double.parse(priceController.text);
                   }
-                  await updatePorch(widget.id, nameController.text, descriptionController.text,newArea,newPrice, nameType, descriptionType, areaType, priceType, _newPorchPosition);
+                  await updatePorch(
+                    widget.id, 
+                    nameController.text, 
+                    descriptionController.text,
+                    newArea,
+                    newPrice, 
+                    nameType, 
+                    descriptionType, 
+                    areaType, 
+                    priceType, 
+                    _newPorchPosition);
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeRentador()));
                   showMessage(context, "Cambios guardados", const Color.fromARGB(127, 0, 255, 8));
                 }
