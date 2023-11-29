@@ -163,9 +163,6 @@ class HomeRentadorState extends State<HomeRentador>{
                   children: [const Text('Precio por día'), Text('\$${UserPorches.porchesInfo[index]['rentPricePerDay']}')]
                 ),
                 onTap: ()async{
-                  User.currentPosition = await Geolocator.getCurrentPosition(
-                    desiredAccuracy: LocationAccuracy.high,
-                  );
                   showPorchInfoDialog(context, UserPorches.porchesInfo[index]['description'],UserPorches.porchesInfo[index]['area'].toDouble(), UserPorches.porchesInfo[index]['rentPricePerDay'].toDouble(), UserPorches.porchesInfo[index]['name'], UserPorches.porchesId[index], LatLng(UserPorches.porchesInfo[index]['location'].latitude, UserPorches.porchesInfo[index]['location'].longitude));
                 },
               ),

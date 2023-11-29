@@ -121,6 +121,7 @@ Future<void> updatePorch(String id, newName, newDescription,double newArea, newP
   DocumentReference porchRef = database.collection("porches").doc(id);
   Map<String, dynamic> updatedData = {};
   bool locationType = false;
+  print(newArea);
   int index = UserPorches.porchesId.indexOf(id);
   if(UserPorches.porchesInfo[index]['location']!=GeoPoint(newLocation.latitude, newLocation.longitude)){
     updatedData = {'location':GeoPoint(newLocation.latitude, newLocation.longitude)};
@@ -133,10 +134,10 @@ Future<void> updatePorch(String id, newName, newDescription,double newArea, newP
     updatedData['description'] = newDescription;
   }
   if(areaType){
-    updatedData['area'] = newName;
+    updatedData['area'] = newArea;
   }
   if(priceType){
-    updatedData['price'] = newPrice;
+    updatedData['rentPricePerDay'] = newPrice;
   }
   if(priceType || areaType || descriptionType || nameType || locationType){
     await porchRef.update(updatedData);

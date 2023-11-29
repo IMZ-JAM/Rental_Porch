@@ -18,6 +18,12 @@ class AgregarPorcheScreen extends StatefulWidget {
 }
 
 class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _currentPosition = LatLng(User.currentPosition.latitude, User.currentPosition.longitude);
+  }
   final _formKey = GlobalKey<FormState>();
   // final _initialCameraPosition = const CameraPosition(target: LatLng(0, 0),);
   final TextEditingController _nameController = TextEditingController();
@@ -28,21 +34,16 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
   late GoogleMapController _controller;
   late LatLng _currentPosition;
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _currentPosition = LatLng(User.currentPosition.latitude, User.currentPosition.longitude);
 
-  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(resizeToAvoidBottomInset: false,
+    return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('Agregar Porche'),
       ),
-      body: SingleChildScrollView(child:Expanded(child:Padding(
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey, 
@@ -92,9 +93,8 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
               const SizedBox(height: 10.0),
               SizedBox(
                 height: 290,
-                
                 child: GoogleMap(
-                   initialCameraPosition: CameraPosition(
+                  initialCameraPosition: CameraPosition(
                   target: LatLng(User.currentPosition.latitude, User.currentPosition.longitude),
                   zoom: 15,
                 ),
@@ -116,17 +116,15 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
                       snippet: "Lat: ${_currentPosition.latitude}, Lng: ${_currentPosition.longitude}",
                     ),
                     icon: BitmapDescriptor.defaultMarker,
-                    draggable: true, // Hace que el marcador sea arrastrable
+                    draggable: true,
                     onDragEnd: (LatLng newPosition) {
                       setState(() {
-                        // Actualiza la posición del marcador cuando el usuario finaliza el arrastre
                         _currentPosition = newPosition;
                       });
                     },
                   ),
                 },
               ),
-
               ),
               const SizedBox(height: 10.0),
               Row(
@@ -170,7 +168,7 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
             ],
           ),
         ),
-      ),))
+      ),
     );
   }
 }
