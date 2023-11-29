@@ -1,10 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:rental_porch_app/services/email_service.dart';
 import 'package:rental_porch_app/services/firebase_service.dart';
-import 'package:rental_porch_app/utils/user.dart';
+import 'package:rental_porch_app/classes/user.dart';
 
 import '../presentation/home_rentador.dart';
 
@@ -32,6 +34,15 @@ void showMessage(BuildContext context, String label, Color colorBackGround) {
 //Para ver si es un numero de telefono
 bool isPhoneNumber(String phoneNumber) {
   return RegExp(r'^[0-9]+$').hasMatch(phoneNumber) && phoneNumber.length==10;
+}
+
+bool isNumber(String str) {
+  // Intenta convertir el String a un número entero
+  
+
+  // Si el númeroEntero es null, significa que la conversión falló
+  // y, por lo tanto, el String no es un número entero
+  return RegExp(r'^[0-9]+$').hasMatch(str);
 }
 
 //Para ver si en algun textfield no hay nada o hay puros espacios vacios
@@ -184,7 +195,6 @@ void showDeletePorchDialog(BuildContext context, String name, String id) {
               ),
               onPressed: () async{
                 await deletePorch(id);
-                // ignore: use_build_context_synchronously
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeRentador()));  
               },
               child: const Text(
@@ -225,7 +235,6 @@ class _EditPorchDialogState extends State<EditPorchDialog> {
   late LatLng _newPorchPosition;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _newPorchPosition = LatLng(widget.location.latitude, widget.location.longitude);
 
@@ -382,13 +391,10 @@ class _EditPorchDialogState extends State<EditPorchDialog> {
                     newPrice = double.parse(priceController.text);
                   }
                   await updatePorch(widget.id, nameController.text, descriptionController.text,newArea,newPrice, nameType, descriptionType, areaType, priceType, _newPorchPosition);
-                  // ignore: use_build_context_synchronously
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeRentador()));
-                  // ignore: use_build_context_synchronously
                   showMessage(context, "Cambios guardados", const Color.fromARGB(127, 0, 255, 8));
                 }
                 else{
-                  // ignore: use_build_context_synchronously
                   showMessage(context, "Ya hay un patio con ese nombre", const Color.fromARGB(184, 255, 0, 0));
                 }
                 
@@ -463,8 +469,7 @@ void showClientsPorchInfoDialog(BuildContext context, String description, double
             IconButton(
               onPressed: ()async{
                 Map<String, dynamic> rentadorInfo = await getSpecificDataUser(rentadorId);
-                // ignore: use_build_context_synchronously
-                showRentadorInformation(context, rentadorInfo);
+                showUserInformation(context, rentadorInfo);
               }, 
               icon: const Icon(Icons.person)
             )
@@ -530,15 +535,15 @@ void showClientsPorchInfoDialog(BuildContext context, String description, double
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text(
+                child: Text(
                   "Cerrar",
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(color: Theme.of(context).primaryColor),
                   ),  
               ),
               
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue
+                  backgroundColor: Theme.of(context).primaryColor,
                 ),
                 onPressed: (){
                   showDialogForReservationEmail(context, rentadorId, id);
@@ -557,22 +562,31 @@ void showClientsPorchInfoDialog(BuildContext context, String description, double
 }
 
 //Mostrar informacion de rentador del porche
-void showRentadorInformation(BuildContext context, Map<String,dynamic> info){
+void showUserInformation(BuildContext context, Map<String,dynamic> info){
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text(''),
+        title: const Text('Datos del rentador'),
         content: 
         SizedBox(
-          height: 100,
+          height: 170,
           child: Column(
-          
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(children:[ const Text("Nombre: "), Text(info['name'])]),
-            Row(children:[ const Text("Telefono: "), Text(info['phoneNumber'])]),
-            Row(children:[ const Text("Email: "), Text(info['email'])]),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children:[ const Text("Nombre: "), Text(info['name']), ]
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children:[ const Text("Telefono: "), Text(info['phoneNumber'])]
+            ),
+            Column(  
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children:[ const Text("Email: "), Text(info['email'])]
+            ),
           ],
         ),),
         
@@ -607,7 +621,6 @@ class _DialogForReservationState extends State<DialogForReservation>{
   late TimeOfDay time;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     date = DateTime.now();
     time = TimeOfDay.now();
@@ -622,8 +635,8 @@ class _DialogForReservationState extends State<DialogForReservation>{
           child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Se enviará un email al rentador con la solicitud de reservación, y tendra su respuesta pronto"),
-            Text("Se puede comunicar con los datos de contacto dados en su perfil"),
+            const Text("Se enviará un email al rentador con la solicitud de reservación, y tendra su respuesta pronto"),
+            const Text("Se puede comunicar con los datos de contacto dados en su perfil"),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children:[
@@ -649,21 +662,21 @@ class _DialogForReservationState extends State<DialogForReservation>{
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text(
+                child: Text(
                   "Cerrar",
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(color: Theme.of(context).primaryColor),
                   ),  
               ),
               
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue
+                  backgroundColor: Theme.of(context).primaryColor,
                 ),
                 onPressed: ()async{
                   DateTime finalDate = DateTime(date.year, date.month, date.day);
                   Map<String, dynamic> rentadorInfo = await getSpecificDataUser(widget.rentadorId);
                   sendEmailForReservation(widget.rentadorId, widget.porcheId, Timestamp.fromDate(finalDate), rentadorInfo);
-                  showMessage(context, 'Reseración enviada', const Color.fromARGB(127, 0, 255, 8));
+                  showMessage(context, 'Reservación enviada', const Color.fromARGB(127, 0, 255, 8));
                 }, 
                 child: const Text(
                   "Enviar reservación",
@@ -707,13 +720,13 @@ void showDialogForReservationEmail(BuildContext context, idRentador, idPorche){
 
 void sendEmailForReservation(String rentadorId, porcheId, Timestamp date, Map<String, dynamic> rentadorInfo)async{
   Map<String, dynamic> porchInfo = await getSpecificDataPorch(porcheId);
-  String message = 'Fecha de resevacion: ${(date.toDate()).toString().substring(0,10)}\nPorche: ${porchInfo['name']}\nNombre de cliente: ${User.info['name']}\nTelefono: ${User.info['phoneNumber']}\nEmail: ${User.info['email']}';
+  String message = 'Solicitud de reservación\nFecha de resevacion: ${(date.toDate()).toString().substring(0,10)}\nPorche: ${porchInfo['name']}\nNombre de cliente: ${User.info['name']}\nTelefono: ${User.info['phoneNumber']}\nEmail: ${User.info['email']}';
   await addReservation(rentadorId, porcheId, date);
-  await sendEmailToAskRes(
+  await sendEmailToAcceptOrDicline(
     name: rentadorInfo['name'], 
     toEmail: rentadorInfo['email'], 
     replyToEmail: User.info['email'], 
     message: message, 
-    clientName: User.info['name']
+    rentadorName: User.info['name']
   );
 }
