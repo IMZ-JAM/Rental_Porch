@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -6,14 +8,15 @@ import 'package:rental_porch_app/presentation/dosopciones.dart';
 import 'package:rental_porch_app/presentation/login_screen.dart';
 import 'package:rental_porch_app/presentation/reservations_screen.dart';
 import 'package:rental_porch_app/presentation/user_page.dart';
-import 'package:rental_porch_app/utils/main_interface.dart';
-import 'package:rental_porch_app/utils/user_porches.dart';
-
-import '../utils/user.dart';
+import '../utils/main_interface.dart';
+import '../classes/user_porches.dart';
+import '../classes/user.dart';
+import '../services/firebase_service.dart';
 
 
 class HomeRentador extends StatefulWidget {
   const HomeRentador({super.key});
+  @override
   HomeRentadorState createState() => HomeRentadorState();
   
 }
@@ -37,7 +40,7 @@ class HomeRentadorState extends State<HomeRentador>{
                 child: Image.network(
                     "https://cdn-icons-png.flaticon.com/512/7429/7429878.png"),
               ),
-              const Text("Menu",
+              const Text("Menú",
                   style:
                   TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
               InkWell(
@@ -45,34 +48,35 @@ class HomeRentadorState extends State<HomeRentador>{
                    User.currentPosition = await Geolocator.getCurrentPosition(
                     desiredAccuracy: LocationAccuracy.high,
                   );
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => AgregarPorcheScreen()));
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(top: 3),
-                  padding: const EdgeInsets.all(15),
-                  width: double.infinity, 
-                  child: const Text("Agregar Patio"),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.grey[100],
-                  ),
-
-                ),
-              ),
-              const SizedBox(height: 3,),
-              InkWell(
-                onTap: () { 
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => const ReservationsScreen()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const AgregarPorcheScreen()));
                 },
                 child: Container(
                   margin: const EdgeInsets.only(top: 3),
                   padding: const EdgeInsets.all(15),
                   width: double.infinity,
-                  child: const Text("Lista de Reservas"),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.grey[100],
+                  ), 
+                  child: const Text("Agregar Patio"),
+
+                ),
+              ),
+              const SizedBox(height: 3,),
+              InkWell(
+                onTap: ()async{ 
+                  await getCurrentReservationsData();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ReservationsScreen()));
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 3),
+                  padding: const EdgeInsets.all(15),
+                  width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.grey[100],
                   ),
+                  child: const Text("Lista de Reservas"),
                 ),
               ),
               Expanded(child: Container()),              
@@ -97,11 +101,11 @@ class HomeRentadorState extends State<HomeRentador>{
                   margin: const EdgeInsets.only(top: 3),
                   padding: const EdgeInsets.all(15),
                   width: double.infinity,
-                  child: const Text("Perfil"),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.grey[100],
                   ),
+                  child: const Text("Perfil"),
                 ),
               ),
               const SizedBox(height: 3),
@@ -116,11 +120,11 @@ class HomeRentadorState extends State<HomeRentador>{
                   margin: const EdgeInsets.only(top: 3),
                   padding: const EdgeInsets.all(15),
                   width: double.infinity,
-                  child: const Text("Elegir Tipo de Usuario"),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.grey[100],
                   ),
+                  child: const Text("Elegir Tipo de Usuario"),
                 ),
               ),
               const SizedBox(height: 60,),
@@ -132,7 +136,7 @@ class HomeRentadorState extends State<HomeRentador>{
                   padding: const EdgeInsets.all(20),
                   margin: const EdgeInsets.only(bottom: 2, top: 2),
                   width: double.infinity,
-                  color: Color.fromARGB(221, 67, 79, 77),
+                  color: const Color.fromARGB(221, 67, 79, 77),
                   alignment: Alignment.center,
                   child: const Text("Cerrar Sesión",
                       style: TextStyle(
@@ -154,11 +158,14 @@ class HomeRentadorState extends State<HomeRentador>{
             return Card(
               child: ListTile(
                 title: Text('${UserPorches.porchesInfo[index]["name"]}'),
+                subtitle: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [const Text('Precio por día'), Text('\$${UserPorches.porchesInfo[index]['rentPricePerDay']}')]
+                ),
                 onTap: ()async{
                   User.currentPosition = await Geolocator.getCurrentPosition(
                     desiredAccuracy: LocationAccuracy.high,
                   );
-                  // ignore: use_build_context_synchronously
                   showPorchInfoDialog(context, UserPorches.porchesInfo[index]['description'],UserPorches.porchesInfo[index]['area'].toDouble(), UserPorches.porchesInfo[index]['rentPricePerDay'].toDouble(), UserPorches.porchesInfo[index]['name'], UserPorches.porchesId[index], LatLng(UserPorches.porchesInfo[index]['location'].latitude, UserPorches.porchesInfo[index]['location'].longitude));
                 },
               ),

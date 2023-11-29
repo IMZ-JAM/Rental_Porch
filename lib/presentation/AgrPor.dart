@@ -7,8 +7,7 @@ import 'package:rental_porch_app/presentation/home_rentador.dart';
 import 'package:rental_porch_app/services/firebase_service.dart';
 import 'package:rental_porch_app/utils/main_interface.dart';
 
-
-import '../utils/user.dart';
+import '../classes/user.dart';
 
 class AgregarPorcheScreen extends StatefulWidget {
   const AgregarPorcheScreen({super.key});
@@ -43,7 +42,7 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
         automaticallyImplyLeading: false,
         title: const Text('Agregar Porche'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(child:Expanded(child:Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey, 
@@ -72,8 +71,8 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
                 decoration: const InputDecoration(labelText: 'Precio por Día (\$)'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, introduce un precio';
+                  if (value == null || value.isEmpty || !isNumber(value)) {
+                    return 'Por favor, introduce un precio correcto';
                   }
                   return null;
                 },
@@ -84,8 +83,8 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
                 decoration: const InputDecoration(labelText: 'Área (m²)'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, introduce una área';
+                  if (value == null || value.isEmpty || !isNumber(value)) {
+                    return 'Por favor, introduce una área correcta';
                   }
                   return null;
                 },
@@ -133,21 +132,7 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                ElevatedButton(
-                onPressed: () async{
-                  if(_formKey.currentState!.validate() && await isPorchNameUnrepeatable(_nameController.text)) {
-                    await addPorch(_nameController.text, _descriptionController.text, double.parse(_priceController.text), double.parse(_areaController.text), GeoPoint(_currentPosition.latitude, _currentPosition.longitude));
-                    
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeRentador()));  
-                    showMessage(context, "Patio agregado", const Color.fromARGB(127, 0, 255, 8));
-                  }
-                  else{
-                    showMessage(context, "Ya hay un patio con ese nombre", const Color.fromARGB(184, 255, 0, 0));
-                  }
-                },
-                child: const Text('Agregar Porche'),
-              ),
-                ElevatedButton(
+                  ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red
                 ),
@@ -156,15 +141,36 @@ class _AgregarPorcheScreenState extends State<AgregarPorcheScreen> {
                     builder: (context) => const HomeRentador()
                   ));  
                 },
-                child: const Text('Cancelar'),
+                child: const Text('Cancelar',style: TextStyle(color: Colors.black),),
               ),
+                ElevatedButton(
+                onPressed: () async{
+                  bool isNameUnrepeatable = await isPorchNameUnrepeatable(_nameController.text);
+                  if(_formKey.currentState!.validate() && isNameUnrepeatable) {
+                    await addPorch(_nameController.text, _descriptionController.text, double.parse(_priceController.text), double.parse(_areaController.text), GeoPoint(_currentPosition.latitude, _currentPosition.longitude));
+                    
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeRentador()));  
+                    showMessage(context, "Patio agregado", const Color.fromARGB(210, 0, 255, 8));
+                  }
+                  else{
+                    if(!isNameUnrepeatable){
+                      showMessage(context, "Ya hay un patio con ese nombre", const Color.fromARGB(184, 255, 0, 0));
+                    }else{
+                      showMessage(context, "LLene todos los datos", const Color.fromARGB(184, 255, 0, 0));
+                    }
+                    
+                  }
+                },
+                child: const Text('Agregar Porche'),
+              ),
+                
               
               ],)
               
             ],
           ),
         ),
-      ),
+      ),))
     );
   }
 }

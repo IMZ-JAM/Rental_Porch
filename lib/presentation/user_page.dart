@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../utils/user.dart';
+import '../classes/user.dart';
 import '../utils/main_interface.dart';
 import '../services/firebase_service.dart';
 
@@ -39,6 +39,7 @@ class _userControllerState extends State<UserPage>{
     Widget build(BuildContext context){
       return Scaffold(
         appBar: AppBar(
+          // ignore: prefer_interpolation_to_compose_strings
           title: Center(child: Text('Cuenta de '+User.info['name'], )),
         ),
         body: SingleChildScrollView(
@@ -166,9 +167,9 @@ class MyPasswordButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-    icon: const Icon(Icons.remove_red_eye, color: Colors.blue), 
-    onPressed: press
-  );
+      icon: Icon(Icons.remove_red_eye, color: Theme.of(context).primaryColor,), 
+      onPressed: press
+    );
   }
 }
 class MyContainer extends StatelessWidget {

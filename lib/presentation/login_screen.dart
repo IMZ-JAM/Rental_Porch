@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:rental_porch_app/presentation/forget_password_screen.dart';
 import 'package:rental_porch_app/presentation/register_screen.dart';
 import 'package:rental_porch_app/presentation/dosopciones.dart';
 import 'package:rental_porch_app/services/firebase_service.dart';
@@ -89,11 +90,23 @@ class _LogInScreenState extends State<LogInScreen> {
                       showMessage(context, loginList[1], const Color.fromARGB(184, 255, 0, 0));
                     }
                     }, 
-                    child: const Text('Iniciar sesion', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.lightBlue ),)),
-                const SizedBox(height: 40,),
+                    child: const Text('Iniciar sesion', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, ),)),
+                const SizedBox(height: 20,),
                 const Text('Aun no tienes cuenta?', style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),),
                 const SizedBox(height: 20,),
-                ElevatedButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterScreen()));}, child: const Text('Registrate', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,  color: Colors.lightBlue ),))
+                ElevatedButton(onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterScreen()));}, child: const Text('Registrate', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),)),
+                const SizedBox(height: 10,),
+                TextButton(
+                  onPressed: (){
+                    Navigator.push(
+                      context, 
+                      MaterialPageRoute(
+                        builder: (context) => const ForgetPasswordScreen()
+                      )
+                    );
+                  }, 
+                  child: const Text("¿Olvidaste tu contraseña?",)
+                )
               ],
             ),
           ],

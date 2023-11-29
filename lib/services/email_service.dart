@@ -3,12 +3,10 @@ import 'package:http/http.dart' as http;
 
 
 
-Future sendEmailToAskRes({
+Future sendEmailForCode({
   required String name,
   required String toEmail,
-  required String replyToEmail,
   required String message,
-  required String clientName
 })async{
   const serviceId = 'service_5eia0s3';
   const templateId = 'template_6x4kj38';
@@ -30,7 +28,6 @@ Future sendEmailToAskRes({
         'to_email': toEmail,
         'to_name': name,
         'message': message,
-        'reply_to_email': replyToEmail,
       }
     })
   );
@@ -72,3 +69,5 @@ Future sendEmailToAcceptOrDicline({
   );
 
 }
+
+

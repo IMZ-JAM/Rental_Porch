@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:rental_porch_app/utils/all_porches.dart';
+import 'package:rental_porch_app/classes/all_porches.dart';
+import 'package:rental_porch_app/presentation/forget_password_screen.dart';
 
 import '../utils/main_interface.dart';
-import '../utils/reservations.dart';
-import '../utils/user.dart';
-import '../utils/user_porches.dart';
+import '../classes/reservations.dart';
+import '../classes/user.dart';
+import '../classes/user_porches.dart';
 import 'dart:isolate';
 
 
@@ -61,7 +62,6 @@ Future<void> getCurrentReservationsData()async{
       Reservations.id.add(doc.id);
       Reservations.info.add(doc.data() as Map<String, dynamic>); 
   }
-  print(Reservations.info);
 }
 
 Future<void> addReservation(String rentadorId, porcheId, Timestamp date)async{
@@ -100,12 +100,20 @@ Future<void> addPorch(String name, description, double price, area, GeoPoint loc
 
 //Eliminar el porche del id
 Future<void> deletePorch(String id)async{
-   await database.collection('porches').doc(id).delete();
-   await database.collection('users').doc(User.id).update({
-      'porches': FieldValue.arrayRemove([id]),
-    });
-   await getCurrentUserData();
-   await getCurrentPorchesData();
+  await database.collection('porches').doc(id).delete();
+  await database.collection('users').doc(User.id).update({
+    'porches': FieldValue.arrayRemove([id]),
+  });
+  //Elimina todas las reservaciones con este porche
+  CollectionReference reservations = database.collection("reservations");
+  QuerySnapshot reservationsQS = await reservations.where('porcheId', isEqualTo: id).get();
+  for (var doc in reservationsQS.docs) {
+    reservations.doc(doc.id).delete();
+  }
+
+  await getCurrentUserData();
+  await getCurrentPorchesData();
+  await getCurrentReservationsData();
 }
 
 //Actualizar un porche
@@ -393,4 +401,23 @@ Future<void> declineReservation(String id)async{
 Future<void> deleteReservation(String id)async{
   await database.collection('reservations').doc(id).delete();
   await getCurrentReservationsData();
+}
+
+Future <bool> searchUserByEmail(String email)async{
+  QuerySnapshot usersDataQS = await database.collection("users").where("email", isEqualTo: email).get();
+  if(usersDataQS.docs.isNotEmpty){
+    ForgetPasswordScreenState.dataUser = usersDataQS.docs.first.data() as Map<String, dynamic>;
+    ForgetPasswordScreenState.dataUser['id'] = usersDataQS.docs.first.id;
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
+Future<void> changePassword(String newPassword)async{
+  DocumentReference userRef = database.collection("users").doc(ForgetPasswordScreenState.dataUser['id']);
+  Map<String, dynamic> updatedData = {};
+  updatedData['password'] = newPassword;
+  await userRef.update(updatedData);
 }
