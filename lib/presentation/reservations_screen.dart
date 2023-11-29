@@ -1,39 +1,44 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:rental_porch_app/presentation/AgrPor.dart';
 import 'package:rental_porch_app/presentation/login_screen.dart';
 import 'package:rental_porch_app/presentation/user_page.dart';
 import 'package:rental_porch_app/services/email_service.dart';
-import 'package:rental_porch_app/utils/user_porches.dart';
+import 'package:rental_porch_app/classes/user_porches.dart';
 import '../services/firebase_service.dart';
 import '../utils/main_interface.dart';
-import '../utils/reservations.dart';
-import '../utils/user.dart';
+import '../classes/reservations.dart';
+import '../classes/user.dart';
+import 'AgrPor.dart';
+import 'dosopciones.dart';
 
 
 class ReservationsScreen extends StatefulWidget {
   const ReservationsScreen({super.key});
+  @override
   ReservationsScreenState createState() => ReservationsScreenState();
   
 }
 
 class ReservationsScreenState extends State<ReservationsScreen>{
   void updateScreen(){
-    setState(() {
-      
-    });
+    setState((){});
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: Drawer(
         child: Container(
-          color: Colors.blue,
+          color: const Color.fromARGB(255, 188, 220, 246),
           child: Column(
             children: [
+              const SizedBox(
+                height: 37,
+              ),
               Container(
-                width: 100,
-                height: 100,
+                width: 110,
+                height: 110,
                 margin: const EdgeInsets.all(25),
                 child: Image.network(
                     "https://cdn-icons-png.flaticon.com/512/7429/7429878.png"),
@@ -49,39 +54,83 @@ class ReservationsScreenState extends State<ReservationsScreen>{
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const AgregarPorcheScreen()));
                 },
                 child: Container(
-                  margin: const EdgeInsets.only(top: 30),
+                  margin: const EdgeInsets.only(top: 3),
                   padding: const EdgeInsets.all(15),
                   width: double.infinity,
-                  color: Colors.grey[100],
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.grey[100],
+                  ), 
                   child: const Text("Agregar Patio"),
+
                 ),
               ),
+              const SizedBox(height: 3,),
               InkWell(
-                onTap: () { 
-                  
+                onTap: ()async{ 
+                  await getCurrentReservationsData();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ReservationsScreen()));
                 },
                 child: Container(
-                  margin: const EdgeInsets.only(top: 30),
+                  margin: const EdgeInsets.only(top: 3),
                   padding: const EdgeInsets.all(15),
                   width: double.infinity,
-                  color: Colors.grey[100],
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.grey[100],
+                  ),
                   child: const Text("Lista de Reservas"),
                 ),
               ),
-              InkWell(
+              Expanded(child: Container()),              
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.settings,
+                    color: Color.fromARGB(255, 125, 115, 115),
+                  ),
+                  Text(" Configuración",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+                ],
+              ),
+              InkWell( 
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const UserPage()));
                 },
                 child: Container(
-                  margin: const EdgeInsets.only(top: 30),
+                  margin: const EdgeInsets.only(top: 3),
                   padding: const EdgeInsets.all(15),
                   width: double.infinity,
-                  color: Colors.grey[100],
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.grey[100],
+                  ),
                   child: const Text("Perfil"),
                 ),
               ),
-              
-              Expanded(child: Container()),
+              const SizedBox(height: 3),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TipoUsuarioScreen()));
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 3),
+                  padding: const EdgeInsets.all(15),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.grey[100],
+                  ),
+                  child: const Text("Elegir Tipo de Usuario"),
+                ),
+              ),
+              const SizedBox(height: 60,),
               InkWell(
                 onTap: () { 
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const LogInScreen()));
@@ -90,7 +139,7 @@ class ReservationsScreenState extends State<ReservationsScreen>{
                   padding: const EdgeInsets.all(20),
                   margin: const EdgeInsets.only(bottom: 2, top: 2),
                   width: double.infinity,
-                  color: Colors.black87,
+                  color: const Color.fromARGB(221, 67, 79, 77),
                   alignment: Alignment.center,
                   child: const Text("Cerrar Sesión",
                       style: TextStyle(
@@ -111,7 +160,6 @@ class ReservationsScreenState extends State<ReservationsScreen>{
           child: ListView.builder(
             itemCount: Reservations.info.where((reservation) => !reservation['accepted']).length,
             itemBuilder: (context, index) {
-              // Filtra solo las reservas donde 'accepted' es false
               List<Map<String, dynamic>> filteredReservations =
                   Reservations.info.where((reservation) => !reservation['accepted']).toList();
               List<String> notAcceptedId = [];
@@ -120,14 +168,15 @@ class ReservationsScreenState extends State<ReservationsScreen>{
                   notAcceptedId.add(Reservations.id[i]);
                 }
               }
-            
-
               return Card(
                 child: ListTile(
                   title: Text('Reserva a nombre de ${filteredReservations[index]['clientName']}'),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [const Text('Fecha'), Text((filteredReservations[index]['date'].toDate()).toString().substring(0,10))]
+                  ),
                   onTap: () async {
                     await showReservationInfo(context, filteredReservations[index], notAcceptedId[index]);
-                    
                   },
                 ),
               );
@@ -143,18 +192,21 @@ class ReservationsScreenState extends State<ReservationsScreen>{
               // Filtra solo las reservas donde 'accepted' es false
               List<Map<String, dynamic>> filteredReservations =
                   Reservations.info.where((reservation) => reservation['accepted']).toList();
-              List<String> AcceptedId = [];
+              List<String> acceptedId = [];
               for(int i=0;i<Reservations.id.length;i++){
                 if(Reservations.info[i]['accepted']){
-                  AcceptedId.add(Reservations.id[i]);
+                  acceptedId.add(Reservations.id[i]);
                 }
               }
               return Card(
                 child: ListTile(
                   title: Text('Reserva a nombre de ${filteredReservations[index]['clientName']}'),
+                   subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [const Text('Fecha'), Text((filteredReservations[index]['date'].toDate()).toString().substring(0,10))]
+                  ),
                   onTap: () async {
-                    await showReservationInfo(context, filteredReservations[index], AcceptedId[index]);
-                    
+                    await showReservationInfo(context, filteredReservations[index], acceptedId[index]);
                   },
                 ),
               );
@@ -165,30 +217,9 @@ class ReservationsScreenState extends State<ReservationsScreen>{
       
     );
   }
-    TextEditingController _controller = TextEditingController();
-
-   void _showCalendar(BuildContext context) async {
-    // Obtiene la fecha seleccionada
-    DateTime? date = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2030),
-    );
-
-    // Si la fecha no es nula, la asigna al campo de texto
-    if (date != null) {
-      setState(() {
-        _controller.text = date.toString().substring(0, 10);
-        print(date);
-      });
-    }
-  }
-  
 Future<void> showReservationInfo(BuildContext context,Map<String, dynamic> info, String id) async {
   Map<String, dynamic> clientInfo =await getSpecificDataUser(info['clientId']);
   int porchIndex = UserPorches.porchesId.indexOf(info['porcheId']);
-  // ignore: use_build_context_synchronously
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -223,10 +254,9 @@ Future<void> showReservationInfo(BuildContext context,Map<String, dynamic> info,
                 String message = 'Su reservación ha sido cancelada por el rentador o ya ocurrió\nFecha de reservación: ${(info['date'].toDate()).toString().substring(0,10)}\nNombre del porche: ${UserPorches.porchesInfo[porchIndex]['name']}\nNombre del rentador: ${User.info['name']}';
                 await sendEmailToAcceptOrDicline(name: clientInfo['name'], toEmail: clientInfo['email'], replyToEmail: User.info['email'], message: message, rentadorName: User.info['name']);
                 Navigator.of(context).pop();
-                // ignore: use_build_context_synchronously
-                showMessage(context, 'Reservacion cancelada', const Color.fromARGB(184, 255, 0, 0));
+                showMessage(context, 'Reservacion cancelada', const Color.fromARGB(210, 255, 0, 0));
               },
-              icon: Icon(Icons.delete)
+              icon: const Icon(Icons.delete)
             ),
             ElevatedButton(
               onPressed: ()async{                
@@ -249,8 +279,7 @@ Future<void> showReservationInfo(BuildContext context,Map<String, dynamic> info,
                 String message = 'Su reservación ha sido aceptada\nFecha de reservación: ${(info['date'].toDate()).toString().substring(0,10)}\nNombre del porche: ${UserPorches.porchesInfo[porchIndex]['name']}\nNombre del rentador: ${User.info['name']}';
                 await sendEmailToAcceptOrDicline(name: clientInfo['name'], toEmail: clientInfo['email'], replyToEmail: User.info['email'], message: message, rentadorName: User.info['name']);
                 Navigator.of(context).pop();
-                // ignore: use_build_context_synchronously
-                showMessage(context, 'Reservacion aceptada', const Color.fromARGB(127, 0, 255, 8));
+                showMessage(context, 'Reservacion aceptada', const Color.fromARGB(210, 0, 255, 8));
               },
               icon: const Icon(Icons.done),
             ),  
@@ -261,8 +290,7 @@ Future<void> showReservationInfo(BuildContext context,Map<String, dynamic> info,
                 String message = 'Su reservación ha sido rechazada\nFecha de reservación: ${(info['date'].toDate()).toString().substring(0,10)}\nNombre del porche: ${UserPorches.porchesInfo[porchIndex]['name']}\nNombre del rentador: ${User.info['name']}';
                 await sendEmailToAcceptOrDicline(name: clientInfo['name'], toEmail: clientInfo['email'], replyToEmail: User.info['email'], message: message, rentadorName: User.info['name']);
                 Navigator.of(context).pop();
-                // ignore: use_build_context_synchronously
-                showMessage(context, 'Reservacion rechazada', const Color.fromARGB(184, 255, 0, 0));
+                showMessage(context, 'Reservacion rechazada', const Color.fromARGB(210, 255, 0, 0));
               },
               icon: const Icon(Icons.cancel)
             ),  
@@ -280,8 +308,6 @@ Future<void> showReservationInfo(BuildContext context,Map<String, dynamic> info,
       );
     },
   );
-}
+  }
 
 }
-
-

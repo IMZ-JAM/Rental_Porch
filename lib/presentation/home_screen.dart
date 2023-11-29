@@ -6,21 +6,17 @@ import 'package:rental_porch_app/presentation/user_page.dart';
 import 'package:rental_porch_app/services/firebase_service.dart';
 import 'package:rental_porch_app/utils/main_interface.dart';
 
-import '../utils/all_porches.dart';
+import '../classes/all_porches.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen> createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   List<bool> _favoritePorches = List<bool>.from(AllPorches.favoritePorches);
-  // Función que se ejecuta cuando se presiona un contenedor
-  void _onContainerPressed(BuildContext context, String text) {
-    // Aquí puedes agregar la lógica que desees cuando se presione un contenedor
-  }
   void changeFavIcon() {
     setState(() {
       _favoritePorches = List<bool>.from(AllPorches.favoritePorches);
@@ -56,20 +52,28 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         icon: Icon(_favoritePorches[index]
                             ? Icons.favorite
-                            : Icons.favorite_outline))
+                            : Icons.favorite_outline,
+                            color: _favoritePorches[index] 
+                            ? Colors.red:
+                            Colors.black
+
+                            )
+                        )
                   ],
+                ),
+                subtitle: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [const Text('Precio por día'), Text('\$${AllPorches.porchesInfo[index]['rentPricePerDay']}')]
                 ),
                 onTap: () {
                   showClientsPorchInfoDialog(
                       context,
                       AllPorches.porchesInfo[index]['description'],
                       AllPorches.porchesInfo[index]['area'].toDouble(),
-                      AllPorches.porchesInfo[index]['rentPricePerDay']
-                          .toDouble(),
+                      AllPorches.porchesInfo[index]['rentPricePerDay'].toDouble(),
                       AllPorches.porchesInfo[index]['name'],
                       AllPorches.porchesId[index],
-                      LatLng(AllPorches.porchesInfo[index]['location'].latitude,
-                          AllPorches.porchesInfo[index]['location'].longitude),
+                      LatLng(AllPorches.porchesInfo[index]['location'].latitude,AllPorches.porchesInfo[index]['location'].longitude),
                       AllPorches.porchesInfo[index]['idOwner']);
                 },
               ),
@@ -80,6 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // ignore: non_constant_identifier_names
   Drawer Menu(BuildContext context) {
     return Drawer(
       child: Container(
@@ -118,14 +123,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 4,
               ),
               SizedBox(
-                height: 350,
+                height: 250,
                 child: SingleChildScrollView(
                   child: Column(children: [
                     if (AllPorches.favoritePorches.isNotEmpty)
                       for (int i = 0; i < AllPorches.porchesId.length; i++)
                         if (AllPorches.favoritePorches[i])
                           InkWell(
-                            onTap: () => _onContainerPressed(context, "Patio"),
+                            onTap: () {
+                               showClientsPorchInfoDialog(
+                                    context,
+                                    AllPorches.porchesInfo[i]['description'],
+                                    AllPorches.porchesInfo[i]['area'].toDouble(),
+                                    AllPorches.porchesInfo[i]['rentPricePerDay'].toDouble(),
+                                    AllPorches.porchesInfo[i]['name'],
+                                    AllPorches.porchesId[i],
+                                    LatLng(AllPorches.porchesInfo[i]['location'].latitude,AllPorches.porchesInfo[i]['location'].longitude),
+                                    AllPorches.porchesInfo[i]['idOwner']);
+                            },
                             child: Container(
                               margin: const EdgeInsets.only(top: 10),
                               padding: const EdgeInsets.all(10),
@@ -149,9 +164,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     Icons.settings,
                     color: Color.fromARGB(255, 125, 115, 115),
                   ),
-                  Text(" Configuración",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+                  Text(
+                    "Configuración",
+                    style:
+                      TextStyle(fontWeight: FontWeight.bold, fontSize: 22)
+                  ),
                 ],
               ),
               const SizedBox(height: 3),
@@ -160,17 +177,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const UserPage()));
+                          builder: (context) => const UserPage()
+                      )    
+                  );
                 },
                 child: Container(
                   margin: const EdgeInsets.only(top: 3),
                   padding: const EdgeInsets.all(15),
                   width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.grey[100],
+                  ),
                   child: const Text("Perfil"),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.grey[100],
-                  ),
                 ),
               ),
               InkWell(
@@ -178,38 +197,47 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => TipoUsuarioScreen()));
+                          builder: (context) => TipoUsuarioScreen()
+                      )
+                  );
                 },
                 child: Container(
                   margin: const EdgeInsets.only(top: 3),
                   padding: const EdgeInsets.all(15),
                   width: double.infinity,
-                  child: const Text("Elegir Tipo de Usuario"),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.grey[100],
                   ),
+                  child: const Text("Elegir Tipo de Usuario"),
                 ),
               ),
-              SizedBox(height: 60),
+              const SizedBox(height: 60),
               InkWell(
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const LogInScreen()));
+                          builder: (context) => const LogInScreen()
+                      )
+                  );
                 },
                 child: Container(
                   padding: const EdgeInsets.all(20),
                   margin: const EdgeInsets.only(bottom: 2, top: 2),
                   width: double.infinity,
-                  color: Color.fromARGB(221, 67, 79, 77),
+                  color: const Color.fromARGB(221, 67, 79, 77),
                   alignment: Alignment.center,
-                  child: const Text("Cerrar Sesión",
-                      style: TextStyle(
+                  child: 
+                  const Text(
+                    "Cerrar Sesión",
+                    style: 
+                      TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 15)),
+                          fontSize: 15
+                      )
+                    ),
                 ),
               ),
             ],
