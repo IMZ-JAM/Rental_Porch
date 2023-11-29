@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rental_porch_app/presentation/splash_screen.dart';
+import 'package:rental_porch_app/presentation/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       title: 'Rental Porch',      
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: LogInScreen(),
     );
   }
 }
